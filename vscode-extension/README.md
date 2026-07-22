@@ -9,12 +9,16 @@ Highlights **unused Python functions, classes, methods, and module-level variabl
 - **Quick Fix (lightbulb / `Cmd+.`)** on an unused definition:
   - **PyDead: keep 'name' (mark as used)** — inserts `# pydead: keep` (preferred)
   - **PyDead: keep (DCxxx only)** — inserts `# pydead: keep DCxxx`
+  - **PyDead: report false positive…** — opens a GitHub issue prefilled with the finding, code snippet, package, and your explanation
   - **PyDead: remove unused …** — deletes the definition
 - Commands:
   - **PyDead: Find Dead Code**
   - **PyDead: Keep (mark as used)** — same as keep quick fix at cursor
+  - **PyDead: Report False Positive (GitHub Issue)**
   - **PyDead: Fix All (workspace)**
   - **PyDead: Fix All in File**
+
+Setting `pydead.issueRepo` (default `https://github.com/ErikbStorm/pydead`) controls where issues are filed.
 
 ## Binary resolution
 

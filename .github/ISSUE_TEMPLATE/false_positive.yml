@@ -1,0 +1,49 @@
+name: False positive (unused is actually used)
+description: Report a symbol PyDead marked unused that is used by a framework/host
+title: "False positive: "
+labels: ["false-positive", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve PyDead entry-point rules.
+        Prefer filing via the VS Code Quick Fix **“Report false positive…”** so details are prefilled.
+  - type: input
+    id: package
+    attributes:
+      label: Package / framework
+      description: e.g. sqlalchemy, pydantic, azure-functions, celery
+      placeholder: sqlalchemy
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen / why it is used
+      description: How does the host call this symbol without a normal Python reference?
+    validations:
+      required: true
+  - type: textarea
+    id: finding
+    attributes:
+      label: Finding details
+      description: Rule code, name, path, confidence (paste from PyDead diagnostic)
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Code snippet
+      render: python
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: pydead version
+      placeholder: pydead 0.1.0
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra context
+      description: Links, docs, related EP rules

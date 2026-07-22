@@ -33,6 +33,10 @@
       {
         "command": "pydead.keepSelection",
         "title": "PyDead: Keep (mark as used)"
+      },
+      {
+        "command": "pydead.reportFalsePositive",
+        "title": "PyDead: Report False Positive (GitHub Issue)"
       }
     ],
     "configuration": {
@@ -70,6 +74,11 @@
           "type": "boolean",
           "default": true,
           "description": "Re-analyze the workspace when a Python file is saved."
+        },
+        "pydead.issueRepo": {
+          "type": "string",
+          "default": "https://github.com/ErikbStorm/pydead",
+          "description": "GitHub repository URL used when reporting false-positive issues."
         }
       }
     }

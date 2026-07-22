@@ -8,6 +8,7 @@ import {
 } from "./client";
 import { DiagnosticController } from "./diagnostics";
 import { buildKeepEdit, keepActionTitle } from "./keep";
+import { findingAtCursor, reportFalsePositive } from "./reportIssue";
 
 let diagnostics: DiagnosticController;
 let statusBar: vscode.StatusBarItem;
@@ -56,10 +57,11 @@ export function activate(context: vscode.ExtensionContext): void {
         return;
       }
       const findings = diagnostics.findingsFor(editor.document.uri);
-      const pos = editor.selection.active;
-      const hit =
-        findings.find((f) => findingRange(f).contains(pos)) ??
-        findings.find((f) => findingRange(f).intersection(editor.selection));
+      const hit = findingAtCursor(
+        findings,
+        editor.selection.active,
+        editor.selection
+      );
       if (!hit) {
         vscode.window.showInformationMessage(
           "PyDead: no unused finding under the cursor"
@@ -76,6 +78,33 @@ export function activate(context: vscode.ExtensionContext): void {
       await vscode.workspace.applyEdit(edit);
       scheduleAnalyze(context);
     }),
+    vscode.commands.registerCommand("pydead.reportFalsePositive", async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor || editor.document.languageId !== "python") {
+        vscode.window.showInformationMessage("PyDead: open a Python file first");
+        return;
+      }
+      const findings = diagnostics.findingsFor(editor.document.uri);
+      const hit = findingAtCursor(
+        findings,
+        editor.selection.active,
+        editor.selection
+      );
+      if (!hit) {
+        vscode.window.showInformationMessage(
+          "PyDead: no unused finding under the cursor"
+        );
+        return;
+      }
+      await reportFalsePositive(editor.document, hit, context);
+    }),
+    vscode.commands.registerCommand(
+      "pydead.reportFalsePositiveOne",
+      async (uri: vscode.Uri, finding: Finding) => {
+        const doc = await vscode.workspace.openTextDocument(uri);
+        await reportFalsePositive(doc, finding, context);
+      }
+    ),
     vscode.languages.registerCodeActionsProvider(
       { language: "python", scheme: "file" },
       new PyDeadCodeActionProvider(),
@@ -264,7 +293,20 @@ class PyDeadCodeActionProvider implements vscode.CodeActionProvider {
         }
       }
 
-      // 3) Remove unused definition
+      // 3) Report false positive → GitHub issue
+      const report = new vscode.CodeAction(
+        `PyDead: report false positive for '${f.name}'…`,
+        vscode.CodeActionKind.QuickFix
+      );
+      report.command = {
+        command: "pydead.reportFalsePositiveOne",
+        title: "Report false positive",
+        arguments: [document.uri, f],
+      };
+      report.diagnostics = pydeadDiagnosticsFor(context, f);
+      actions.push(report);
+
+      // 4) Remove unused definition
       if (f.fixable) {
         const remove = new vscode.CodeAction(
           `PyDead: remove unused ${f.kind} '${f.name}'`,
