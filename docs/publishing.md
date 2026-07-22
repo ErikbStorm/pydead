@@ -69,10 +69,23 @@ git push origin v0.1.0
 
 | Audience | How |
 |----------|-----|
-| VS Code | Extensions view → search **PyDead** |
-| CLI | `curl -fsSL https://raw.githubusercontent.com/ErikbStorm/pydead/main/scripts/install.sh \| bash` |
-| CLI (manual) | Download archive from the release |
+| VS Code | Prefer **VSIX** from the GitHub Release until Marketplace is public |
+| VS Code | Marketplace item `pydead.pydead` (only after it appears in [manage](https://marketplace.visualstudio.com/manage)) |
+| CLI | `curl -fsSL …/scripts/install.sh \| bash` (checks `SHA256SUMS`) |
 | Dev | `cargo install --path crates/pydead` |
+
+### Marketplace 404 after `vsce` says “Published”
+
+This usually means the package was accepted by the service but is **not public in the gallery** yet (or the publisher is incomplete). Check:
+
+1. Open **[Publisher Management](https://marketplace.visualstudio.com/manage)** with the **same Microsoft account** used for the Azure DevOps PAT.
+2. Confirm publisher id is exactly **`pydead`** (must match `package.json` `"publisher"`).
+3. Open extension **pydead** → status should be **Published** (not Draft / Unpublished).
+4. Accept any pending **publisher agreement** / email verification prompts.
+5. PAT scopes: **Marketplace → Manage** (All accessible organizations).
+
+Re-run **Actions → Publish Marketplace** after fixing hub state.  
+Public page: `https://marketplace.visualstudio.com/items?itemName=pydead.pydead`
 
 ## Manual local VSIX (optional)
 
