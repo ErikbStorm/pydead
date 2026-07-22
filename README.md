@@ -50,30 +50,54 @@ Unused definitions are underlined; the status bar shows **PyDead: N**. Quick Fix
 
 ## Install
 
-### VS Code (recommended)
+### VS Code / Cursor (recommended)
 
-Install **PyDead** from the Extensions view (search “PyDead”), or:
+The extension **bundles the `pydead` binary** for your OS — no separate CLI install needed.
+
+**Option A — Marketplace** (when published):
+
+1. Open the Extensions view (`⌘⇧X` / `Ctrl+Shift+X`)
+2. Search for **PyDead**
+3. Click **Install**
+
+Or from a terminal:
 
 ```bash
 code --install-extension pydead.pydead
+# Cursor:
+# cursor --install-extension pydead.pydead
 ```
 
-The extension **bundles the analyzer binary** for your platform — no separate CLI install needed.
+**Option B — VSIX from GitHub Releases** (works immediately):
 
-> Marketplace listing goes live after the first tagged release (see [`docs/publishing.md`](docs/publishing.md)).
+1. Open the latest [Release](https://github.com/ErikbStorm/pydead/releases)
+2. Download `pydead-*.vsix`
+3. Install it:
+
+```bash
+code --install-extension pydead-0.1.0.vsix
+# or in VS Code: Extensions → ⋯ → Install from VSIX…
+```
+
+4. Reload the window, open a Python folder, and run **PyDead: Find Dead Code** from the Command Palette (`⌘⇧P` / `Ctrl+Shift+P`).
+
+**Verify it works:** status bar should show **PyDead** / **PyDead: N**. Problems panel lists unused symbols with codes like `DC001`.
 
 ### CLI (no Rust required)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ErikbStorm/pydead/main/scripts/install.sh | bash
 # installs to ~/.local/bin/pydead — ensure that dir is on your PATH
+pydead find .
 ```
 
-Or download a prebuilt archive from [GitHub Releases](https://github.com/ErikbStorm/pydead/releases).
+Or download a platform archive from [GitHub Releases](https://github.com/ErikbStorm/pydead/releases) and put `pydead` on your `PATH`.
 
 ### From source (developers)
 
 ```bash
+cargo install --git https://github.com/ErikbStorm/pydead --locked pydead
+# or, from a clone:
 cargo install --path crates/pydead
 ```
 
@@ -225,5 +249,6 @@ fixtures/sample_project # Ground-truth monorepo for tests
 
 ## License
 
-- **Source code** (CLI, extension TypeScript, scripts): [MIT](LICENSE)
-- **Logo / icon artwork** (including flat variant): [CC BY 4.0](docs/images/LICENSE)
+This repository is licensed under the **[MIT License](LICENSE)** (shown on GitHub as MIT).
+
+Logo and icon artwork are **[CC BY 4.0](docs/images/LICENSE)** (see that file for attribution).

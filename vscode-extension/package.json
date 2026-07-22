@@ -4,7 +4,7 @@
   "description": "Highlight unused Python functions, classes, methods, and variables across the whole workspace folder.",
   "version": "0.1.0",
   "publisher": "pydead",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
   "icon": "icon.png",
   "galleryBanner": {
     "color": "#1a1b26",
