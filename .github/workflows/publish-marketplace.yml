@@ -1,7 +1,11 @@
-# Manual (re)publish of the latest GitHub Release VSIX to the VS Code Marketplace.
-# Run from Actions → "Publish Marketplace" → Run workflow.
+# Publish (or re-publish) the extension to the VS Code Marketplace under publisher `pydead`.
 #
-# Requires secret: VSCE_PAT (Azure DevOps PAT with Marketplace Manage)
+# Prerequisites (must use the SAME Microsoft account for all of these):
+#   1. Create publisher id `pydead` at https://marketplace.visualstudio.com/manage
+#   2. Azure DevOps PAT with Marketplace → Manage (All accessible organizations)
+#   3. Repo secret VSCE_PAT = that PAT
+#
+# Run: Actions → "Publish Marketplace" → Run workflow
 
 name: Publish Marketplace
 
@@ -9,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to publish (e.g. v0.1.0)"
+        description: "Release tag to take binaries/VSIX from (e.g. v0.1.0)"
         required: true
         default: "v0.1.0"
 
@@ -26,37 +30,68 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Download VSIX from release
+      - name: Download release VSIX
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           gh release download "${{ inputs.tag }}" -R "${{ github.repository }}" -p "*.vsix"
           ls -la *.vsix
-          unzip -p pydead-*.vsix extension/package.json | tee /tmp/pkg.json
-          node -e "const p=require('/tmp/pkg.json'); console.log('itemName=', p.publisher+'.'+p.name, 'version=', p.version)"
+          unzip -p pydead-*.vsix extension/package.json > /tmp/pkg.json
+          echo "Packaged as:"
+          node -e "const p=require('/tmp/pkg.json'); console.log(JSON.stringify({publisher:p.publisher,name:p.name,version:p.version},null,2))"
+          if [[ "$(node -p "require('/tmp/pkg.json').publisher")" != "pydead" ]]; then
+            echo "::error::VSIX publisher is not 'pydead' — fix package.json and rebuild"
+            exit 1
+          fi
 
-      - name: Diagnose publisher + publish
+      - name: Publish to Marketplace
         env:
+          # vsce reads this env var when -p is not used; we pass both for compatibility
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           set -euo pipefail
           if [[ -z "${VSCE_PAT:-}" ]]; then
-            echo "::error::VSCE_PAT secret is empty"
+            echo "::error::Secret VSCE_PAT is empty. Create an Azure DevOps PAT with Marketplace → Manage and add it as a repo secret."
             exit 1
           fi
-          echo "VSCE_PAT is set (length ${#VSCE_PAT})"
-          npm install -g @vscode/vsce@2
-          echo "== vsce ls-publishers =="
-          vsce ls-publishers -p "$VSCE_PAT" || true
-          echo "== vsce show pydead.pydead =="
-          vsce show pydead.pydead -p "$VSCE_PAT" || true
+          echo "VSCE_PAT length: ${#VSCE_PAT} (value redacted)"
+
+          npm install -g @vscode/vsce@2.32.0
+
           VSIX="$(ls -1 pydead-*.vsix | head -1)"
-          echo "== publishing $VSIX =="
-          # --skip-duplicate: ok if version already exists server-side but public gallery lag
-          vsce publish --packagePath "$VSIX" --no-dependencies -p "$VSCE_PAT" 2>&1 || {
-            echo "::warning::publish failed; trying with --skip-duplicate"
-            vsce publish --packagePath "$VSIX" --no-dependencies --skip-duplicate -p "$VSCE_PAT"
-          }
-          echo "== vsce show after =="
-          vsce show pydead.pydead -p "$VSCE_PAT" || true
+          echo "Publishing $VSIX as pydead.pydead …"
+
+          # Fail hard with full error text (no silent success path)
+          set +e
+          OUT="$(vsce publish --packagePath "$VSIX" --no-dependencies -p "$VSCE_PAT" 2>&1)"
+          CODE=$?
+          set -e
+          echo "$OUT"
+
+          if echo "$OUT" | grep -qi 'Unknown publisher\|does not exist\|not found\|401\|403\|Unauthorized\|Invalid'; then
+            echo ""
+            echo "::error::Publish rejected. Common fixes:"
+            echo "  1. Publisher id on https://marketplace.visualstudio.com/manage must be exactly: pydead"
+            echo "  2. Sign in to marketplace.visualstudio.com with the SAME account that created the Azure DevOps PAT"
+            echo "  3. PAT scopes: Custom → Marketplace → Manage, Organization: All accessible organizations"
+            echo "  4. Accept the Marketplace publisher agreement in the hub UI"
+            exit 1
+          fi
+
+          if [[ $CODE -ne 0 ]]; then
+            # Version already exists is OK for re-runs
+            if echo "$OUT" | grep -qi 'already exists\|version already'; then
+              echo "::warning::Version already on the server; trying --skip-duplicate"
+              vsce publish --packagePath "$VSIX" --no-dependencies --skip-duplicate -p "$VSCE_PAT"
+            else
+              echo "::error::vsce publish failed with exit $CODE"
+              exit "$CODE"
+            fi
+          fi
+
+          echo ""
+          echo "vsce reported success. Public page (can take several minutes):"
+          echo "  https://marketplace.visualstudio.com/items?itemName=pydead.pydead"
+          echo "Manage (must show the extension under publisher pydead):"
+          echo "  https://marketplace.visualstudio.com/manage/publishers/pydead"

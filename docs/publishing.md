@@ -74,18 +74,31 @@ git push origin v0.1.0
 | CLI | `curl -fsSL …/scripts/install.sh \| bash` (checks `SHA256SUMS`) |
 | Dev | `cargo install --path crates/pydead` |
 
+### Empty publisher (no extensions listed)
+
+If https://marketplace.visualstudio.com/manage shows publisher **`pydead`** but **no extensions**:
+
+1. Confirm **`package.json`** has `"publisher": "pydead"` (exact id, case-sensitive).
+2. Create a **new Azure DevOps PAT** while signed in as the **same** Microsoft account that owns that publisher:
+   - https://dev.azure.com → User settings → Personal access tokens  
+   - Organization: **All accessible organizations**  
+   - Scopes: **Marketplace → Manage**
+3. Update the GitHub secret:
+   ```bash
+   gh secret set VSCE_PAT --repo ErikbStorm/pydead
+   # paste the new PAT
+   ```
+4. Run **Actions → Publish Marketplace** (uses release VSIX + your PAT).
+5. Refresh the manage page — you should see extension **pydead**.
+
+Public URL (after it appears in the hub):  
+https://marketplace.visualstudio.com/items?itemName=pydead.pydead
+
+Until then, install via VSIX from GitHub Releases.
+
 ### Marketplace 404 after `vsce` says “Published”
 
-This usually means the package was accepted by the service but is **not public in the gallery** yet (or the publisher is incomplete). Check:
-
-1. Open **[Publisher Management](https://marketplace.visualstudio.com/manage)** with the **same Microsoft account** used for the Azure DevOps PAT.
-2. Confirm publisher id is exactly **`pydead`** (must match `package.json` `"publisher"`).
-3. Open extension **pydead** → status should be **Published** (not Draft / Unpublished).
-4. Accept any pending **publisher agreement** / email verification prompts.
-5. PAT scopes: **Marketplace → Manage** (All accessible organizations).
-
-Re-run **Actions → Publish Marketplace** after fixing hub state.  
-Public page: `https://marketplace.visualstudio.com/items?itemName=pydead.pydead`
+If publish logs say success but the public page 404s and the hub is still empty, the PAT almost always belongs to a **different** Microsoft account than the hub publisher. Recreate the PAT under the hub account (steps above) and re-run **Publish Marketplace**.
 
 ## Manual local VSIX (optional)
 
