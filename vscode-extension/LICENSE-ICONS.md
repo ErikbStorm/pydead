@@ -1,48 +1,12 @@
-# PyDead icon license
+# Icon license (CC BY 4.0)
 
 Copyright (c) 2026 Erik
 
-The **PyDead logo and icon artwork** in this repository — including but not
-limited to:
+Logo and icon artwork in this package (`icon.png`) and the matching assets under
+`docs/images/` in the source repository are licensed under
+**Creative Commons Attribution 4.0 International (CC BY 4.0)**.
 
-- `docs/images/icon.png` / `icon-flat.png`
-- `docs/images/icon-transparent.png` / `icon-flat-transparent.png` (true alpha)
-- `vscode-extension/icon.png` / `icon-flat.png`
-- `vscode-extension/icon-transparent.png` / `icon-flat-transparent.png`
-- size variants under `vscode-extension/media/` (`icon-*.png`, `icon-flat-*.png`, `*-transparent-*.png`)
+See the full notice at:
+https://github.com/ErikbStorm/pydead/blob/main/docs/images/LICENSE
 
-— are original project artwork and are licensed under the
-**Creative Commons Attribution 4.0 International License (CC BY 4.0)**.
-
-## You are free to
-
-- **Share** — copy and redistribute the material in any medium or format
-- **Adapt** — remix, transform, and build upon the material for any purpose,
-  even commercially
-
-## Under the following terms
-
-- **Attribution** — You must give appropriate credit, provide a link to the
-  license, and indicate if changes were made. You may do so in any reasonable
-  manner, but not in any way that suggests the licensor endorses you or your use.
-
-Suggested credit:
-
-```
-PyDead icon © Erik — https://github.com/ErikbStorm/pydead
-Licensed under CC BY 4.0
-```
-
-## Full legal code
-
-https://creativecommons.org/licenses/by/4.0/legalcode
-
-A human-readable summary is available at:
-
-https://creativecommons.org/licenses/by/4.0/
-
----
-
-The rest of the PyDead **source code** (Rust CLI, VS Code extension TypeScript,
-scripts, etc.) remains under the **MIT License** in the repository root
-`LICENSE` file, unless a file states otherwise.
+Suggested credit: `PyDead icon © Erik — https://github.com/ErikbStorm/pydead (CC BY 4.0)`

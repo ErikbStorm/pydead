@@ -4,9 +4,9 @@ Captures **real PNG** images for the README **without opening your personal VS C
 
 | Output | How |
 |--------|-----|
-| `docs/images/cli-find.png` | **True XTerm window** under Xvfb running real `pydead find` (ImageMagick `import`) |
-| `docs/images/vscode-diag.png` | **code-server** (Default Dark Modern) + real extension + fixture |
-| `docs/images/vscode-quickfix.png` | Same session after **Quick Fix** (`Ctrl+.`) |
+| `docs/images/cli-find.png` | XTerm under Xvfb + real `pydead find` |
+| `docs/images/vscode-diag.png` | code-server (dark) + extension + fixture |
+| `docs/images/vscode-quickfix.png` | Same session after Quick Fix |
 
 ## Run (host)
 

@@ -18,6 +18,7 @@ vscode-extension/bin/**
 
 # Editors / OS
 .DS_Store
+**/.DS_Store
 .idea/
 .vscode/
 !vscode-extension/

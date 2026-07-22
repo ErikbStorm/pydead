@@ -19,10 +19,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-# python3-pil: optional offline fallback render only
 # xvfb + xterm + xdotool + imagemagick: true CLI window screenshots
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 python3-pil fonts-dejavu-core \
+    fonts-dejavu-core \
     xvfb xterm xdotool x11-utils imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
@@ -41,10 +40,12 @@ RUN npm install --no-fund --no-audit && npm run compile \
     && cp /usr/local/bin/pydead bin/linux-x64/pydead \
     && chmod +x bin/linux-x64/pydead
 
-# Install extension into code-server (symlink extension dir into extensions path)
+# Install extension into code-server (folder name = publisher.name-version)
 ENV XDG_DATA_HOME=/work/.local/share
 RUN mkdir -p /work/.local/share/code-server/extensions \
-    && ln -s /work/vscode-extension /work/.local/share/code-server/extensions/pydead.pydead-0.1.0
+    && EXT_VER="$(node -p "require('./package.json').version")" \
+    && ln -s /work/vscode-extension \
+       "/work/.local/share/code-server/extensions/pydead.pydead-${EXT_VER}"
 
 WORKDIR /work/scripts/screenshots
 RUN npm install --no-fund --no-audit \
