@@ -1,0 +1,12 @@
+{
+  "name": "pydead-screenshots",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture": "node capture-codeserver.mjs",
+    "postinstall": "npx playwright install chromium"
+  },
+  "devDependencies": {
+    "playwright": "^1.51.0"
+  }
+}

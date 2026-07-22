@@ -1,0 +1,12 @@
+target
+**/target
+.git
+**/node_modules
+vscode-extension/node_modules
+vscode-extension/out
+vscode-extension/bin
+**/*.vsix
+scripts/screenshots/node_modules
+scripts/screenshots/.vscode-test-web
+docs/images/*.png
+.DS_Store

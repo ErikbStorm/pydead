@@ -1,17 +1,18 @@
 # README visuals
 
-SVG mockups used on the project README (CLI + VS Code).
+**PNG screenshots** used on the project README (real CLI + real VS Code via Docker).
 
-## Regenerate
+## Regenerate (recommended)
 
 ```bash
-python3 scripts/generate_readme_assets.py
+# Never opens your desktop VS Code
+./scripts/screenshots/run-docker.sh
 ```
 
-| File | Content |
-|------|---------|
-| `cli-find.svg` | Colorful terminal output of `pydead find` |
-| `vscode-diag.svg` | Editor with unused highlights, Problems, status bar |
-| `vscode-quickfix.svg` | Quick Fix menu (keep / report / remove) |
+| File | Source |
+|------|--------|
+| `cli-find.png` | Real `pydead find` output (framed as terminal) |
+| `vscode-diag.png` | code-server + real extension + fixture (Playwright) |
+| `vscode-quickfix.png` | Same session, Quick Fix lightbulb |
 
-These are **hand-authored layouts in code**, not AI screenshots or GUI captures, so rule codes and labels stay accurate.
+Optional SVG mockups (`*.svg`) can still be built with `python3 scripts/generate_readme_assets.py` for offline previews without Docker.
