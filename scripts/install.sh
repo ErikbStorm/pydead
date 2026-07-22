@@ -49,28 +49,35 @@ target="${rust_arch}-${rust_os}"
 
 if [[ -z "$VERSION" ]]; then
   info "resolving latest release from ${REPO}…"
-  # Prefer the API; fall back to redirect for unauthenticated use
-  VERSION="$(
-    curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" \
-      | sed -n 's/.*"tag_name": "v\?\([^"]*\)".*/\1/p' \
-      | head -1
-  )"
+  # Prefer the API; fall back to redirect (do not fail under set -e)
+  api_json="$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null || true)"
+  if [[ -n "$api_json" ]]; then
+    VERSION="$(printf '%s' "$api_json" | sed -n 's/.*"tag_name": *"v*\([^"]*\)".*/\1/p' | head -1)"
+  fi
   if [[ -z "$VERSION" ]]; then
     # redirect: …/releases/latest → …/releases/tag/vX.Y.Z
     loc="$(curl -fsSIL "https://github.com/${REPO}/releases/latest" 2>/dev/null \
-      | tr -d '\r' | sed -n 's/^[Ll]ocation: //p' | tail -1)"
-    VERSION="$(printf '%s' "$loc" | sed -n 's|.*/tag/v\?\([^/]*\)$|\1|p')"
+      | tr -d '\r' | sed -n 's/^[Ll]ocation: //p' | tail -1 || true)"
+    VERSION="$(printf '%s' "$loc" | sed -n 's|.*/tag/v*\([^/]*\)$|\1|p')"
   fi
 fi
+
+# Accept PYDEAD_VERSION=v0.1.0 or 0.1.0
+VERSION="${VERSION#v}"
 
 if [[ -z "$VERSION" ]]; then
   red "could not determine latest version; set PYDEAD_VERSION=0.1.0"
   exit 1
 fi
 
+# ARM Linux is not published yet
+if [[ "$target" == "aarch64-unknown-linux-gnu" ]]; then
+  red "no prebuilt binary for ${target} yet; use cargo from source or an x86_64 host"
+  exit 1
+fi
+
 asset="pydead-${VERSION}-${target}.tar.gz"
 url="https://github.com/${REPO}/releases/download/v${VERSION}/${asset}"
-
 info "installing pydead v${VERSION} (${target})"
 info "from ${url}"
 

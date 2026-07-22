@@ -2,9 +2,9 @@
   "name": "pydead",
   "displayName": "PyDead — Python Dead Code",
   "description": "Highlight unused Python functions, classes, methods, and variables across the whole workspace folder.",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "publisher": "pydead",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "icon": "icon.png",
   "galleryBanner": {
     "color": "#1a1b26",

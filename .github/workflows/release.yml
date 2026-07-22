@@ -222,8 +222,11 @@ jobs:
 
             ### From source
             ```bash
-            cargo install --path crates/pydead --git https://github.com/ErikbStorm/pydead --tag ${{ steps.ver.outputs.tag }}
+            cargo install --git https://github.com/ErikbStorm/pydead --tag ${{ steps.ver.outputs.tag }} --locked pydead
             ```
+
+            ### License
+            Source code: MIT · Logo/icons: CC BY 4.0 (see `LICENSE` and `docs/images/LICENSE`)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
