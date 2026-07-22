@@ -56,6 +56,10 @@
         "title": "PyDead: Keep (mark as used)"
       },
       {
+        "command": "pydead.keepSelectionCodeOnly",
+        "title": "PyDead: Keep (this rule code only)"
+      },
+      {
         "command": "pydead.reportFalsePositive",
         "title": "PyDead: Report False Positive (GitHub Issue)"
       }
@@ -71,6 +75,11 @@
           "command": "pydead.reportFalsePositive",
           "when": "editorLangId == python && resourceScheme == file",
           "group": "pydead@2"
+        },
+        {
+          "command": "pydead.fixFile",
+          "when": "editorLangId == python && resourceScheme == file",
+          "group": "pydead@3"
         }
       ],
       "commandPalette": [
@@ -79,7 +88,19 @@
           "when": "editorLangId == python"
         },
         {
+          "command": "pydead.keepSelectionCodeOnly",
+          "when": "editorLangId == python"
+        },
+        {
           "command": "pydead.reportFalsePositive",
+          "when": "editorLangId == python"
+        },
+        {
+          "command": "pydead.fixFile",
+          "when": "editorLangId == python"
+        },
+        {
+          "command": "pydead.fixAll",
           "when": "editorLangId == python"
         }
       ]

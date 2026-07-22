@@ -50,34 +50,12 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("pydead.afterKeep", () => {
       scheduleAnalyze(context);
     }),
-    vscode.commands.registerCommand("pydead.keepSelection", async () => {
-      const editor = vscode.window.activeTextEditor;
-      if (!editor || editor.document.languageId !== "python") {
-        vscode.window.showInformationMessage("PyDead: open a Python file first");
-        return;
-      }
-      const findings = diagnostics.findingsFor(editor.document.uri);
-      const hit = findingAtCursor(
-        findings,
-        editor.selection.active,
-        editor.selection
-      );
-      if (!hit) {
-        vscode.window.showInformationMessage(
-          "PyDead: no unused finding under the cursor"
-        );
-        return;
-      }
-      const edit = buildKeepEdit(editor.document, hit, false);
-      if (!edit) {
-        vscode.window.showInformationMessage(
-          "PyDead: keep marker already present"
-        );
-        return;
-      }
-      await vscode.workspace.applyEdit(edit);
-      scheduleAnalyze(context);
-    }),
+    vscode.commands.registerCommand("pydead.keepSelection", () =>
+      keepAtCursor(context, false)
+    ),
+    vscode.commands.registerCommand("pydead.keepSelectionCodeOnly", () =>
+      keepAtCursor(context, true)
+    ),
     vscode.commands.registerCommand("pydead.reportFalsePositive", async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== "python") {
@@ -109,10 +87,7 @@ export function activate(context: vscode.ExtensionContext): void {
       { language: "python", scheme: "file" },
       new PyDeadCodeActionProvider(),
       {
-        providedCodeActionKinds: [
-          vscode.CodeActionKind.QuickFix,
-          vscode.CodeActionKind.Empty.append("pydead"),
-        ],
+        providedCodeActionKinds: [vscode.CodeActionKind.QuickFix],
       }
     ),
     vscode.workspace.onDidSaveTextDocument((doc) => {
@@ -197,6 +172,38 @@ async function analyzeWorkspace(
   }
 }
 
+async function keepAtCursor(
+  context: vscode.ExtensionContext,
+  codeOnly: boolean
+): Promise<void> {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document.languageId !== "python") {
+    vscode.window.showInformationMessage("PyDead: open a Python file first");
+    return;
+  }
+  const findings = diagnostics.findingsFor(editor.document.uri);
+  const hit = findingAtCursor(
+    findings,
+    editor.selection.active,
+    editor.selection
+  );
+  if (!hit) {
+    vscode.window.showInformationMessage(
+      "PyDead: no unused finding under the cursor"
+    );
+    return;
+  }
+  const edit = buildKeepEdit(editor.document, hit, codeOnly);
+  if (!edit) {
+    vscode.window.showInformationMessage(
+      "PyDead: keep marker already present"
+    );
+    return;
+  }
+  await vscode.workspace.applyEdit(edit);
+  scheduleAnalyze(context);
+}
+
 async function fixFindings(
   context: vscode.ExtensionContext,
   findings: Finding[]
@@ -233,6 +240,16 @@ async function fixFindings(
   }
 }
 
+/**
+ * Lightbulb (⌘.) only offers the two common actions:
+ *   1. Keep  (`# pydead: keep`) — preferred
+ *   2. Remove this definition
+ *
+ * Less common actions stay in the Command Palette / editor context menu:
+ *   - PyDead: Keep (code only) — via keepSelection + code-only not in lightbulb
+ *   - PyDead: Report False Positive
+ *   - PyDead: Fix All in File / workspace
+ */
 class PyDeadCodeActionProvider implements vscode.CodeActionProvider {
   provideCodeActions(
     document: vscode.TextDocument,
@@ -262,7 +279,7 @@ class PyDeadCodeActionProvider implements vscode.CodeActionProvider {
       }
       seen.add(f.id);
 
-      // 1) Mark as used — preferred non-destructive fix
+      // Preferred: mark as used
       const keepEdit = buildKeepEdit(document, f, false);
       if (keepEdit) {
         const keep = new vscode.CodeAction(
@@ -279,34 +296,7 @@ class PyDeadCodeActionProvider implements vscode.CodeActionProvider {
         actions.push(keep);
       }
 
-      // 2) Keep only this rule code
-      if (f.code) {
-        const keepCodeEdit = buildKeepEdit(document, f, true);
-        if (keepCodeEdit) {
-          const keepCode = new vscode.CodeAction(
-            keepActionTitle(f, true),
-            vscode.CodeActionKind.QuickFix
-          );
-          keepCode.edit = keepCodeEdit;
-          keepCode.diagnostics = pydeadDiagnosticsFor(context, f);
-          actions.push(keepCode);
-        }
-      }
-
-      // 3) Report false positive → GitHub issue
-      const report = new vscode.CodeAction(
-        `PyDead: report false positive for '${f.name}'…`,
-        vscode.CodeActionKind.QuickFix
-      );
-      report.command = {
-        command: "pydead.reportFalsePositiveOne",
-        title: "Report false positive",
-        arguments: [document.uri, f],
-      };
-      report.diagnostics = pydeadDiagnosticsFor(context, f);
-      actions.push(report);
-
-      // 4) Remove unused definition
+      // Remove this definition only (bulk fix lives in the command palette)
       if (f.fixable) {
         const remove = new vscode.CodeAction(
           `PyDead: remove unused ${f.kind} '${f.name}'`,
@@ -320,18 +310,6 @@ class PyDeadCodeActionProvider implements vscode.CodeActionProvider {
         remove.diagnostics = pydeadDiagnosticsFor(context, f);
         actions.push(remove);
       }
-    }
-
-    if (findings.some((f) => f.fixable)) {
-      const all = new vscode.CodeAction(
-        "PyDead: remove all unused in file",
-        vscode.CodeActionKind.QuickFix
-      );
-      all.command = {
-        command: "pydead.fixFile",
-        title: "Fix all in file",
-      };
-      actions.push(all);
     }
 
     return actions;

@@ -55,11 +55,14 @@ pydead find .
 
 ### VS Code
 
-Unused definitions are underlined; the status bar shows **PyDead: N**. Quick Fix (`⌘.` / `Ctrl+.`) can:
+Unused definitions are underlined; the status bar shows **PyDead: N**.
 
-- **keep** → insert `# pydead: keep`
-- **report false positive** → open a prefilled GitHub issue
-- **remove** → delete the definition
+**Quick Fix** (`⌘.` / `Ctrl+.`) — two options only:
+
+- **Keep** → insert `# pydead: keep`
+- **Remove** → delete this definition
+
+Other actions live in the **Command Palette** / right-click menu: report false positive, keep (rule code only), fix all in file/workspace.
 
 ## Install
 
