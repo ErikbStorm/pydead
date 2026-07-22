@@ -88,11 +88,11 @@ Status bar shows **PyDead: N**; Problems lists findings like `DC001`.
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ErikbStorm/pydead/main/scripts/install.sh | bash
 # installs to ~/.local/bin/pydead — ensure that dir is on your PATH
+# verifies SHA-256 against the release SHA256SUMS file
 pydead find .
 ```
 
-Or download a platform archive from [GitHub Releases](https://github.com/ErikbStorm/pydead/releases) and put `pydead` on your `PATH`.
-
+Or download a platform archive from [GitHub Releases](https://github.com/ErikbStorm/pydead/releases), check it against `SHA256SUMS`, and put `pydead` on your `PATH`.
 ### From source (developers)
 
 ```bash

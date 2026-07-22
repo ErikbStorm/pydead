@@ -200,6 +200,21 @@ jobs:
           cp vscode-extension/pydead-*.vsix release-assets/
           ls -la release-assets/
 
+      - name: Generate SHA256SUMS
+        run: |
+          set -euo pipefail
+          cd release-assets
+          # Checksum release artifacts only (not the sums file itself)
+          rm -f SHA256SUMS
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum pydead-* > SHA256SUMS
+          else
+            shasum -a 256 pydead-* > SHA256SUMS
+          fi
+          echo "=== SHA256SUMS ==="
+          cat SHA256SUMS
+          ls -la
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -218,7 +233,11 @@ jobs:
             ```bash
             curl -fsSL https://raw.githubusercontent.com/ErikbStorm/pydead/main/scripts/install.sh | bash
             ```
-            Or grab a platform archive below and put `pydead` on your `PATH`.
+            The installer verifies the archive against **SHA256SUMS** on this release
+            (override with `PYDEAD_VERIFY=0` only if you know what you are doing).
+
+            Or grab a platform archive below and put `pydead` on your `PATH` after
+            checking it against `SHA256SUMS`.
 
             ### From source
             ```bash

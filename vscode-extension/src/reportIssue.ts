@@ -66,10 +66,18 @@ export async function reportFalsePositive(
     platform: platformHint(),
   });
 
-  const repoBase = (
+  const configured = (
     vscode.workspace.getConfiguration("pydead").get<string>("issueRepo") ||
     DEFAULT_ISSUES_REPO
-  ).replace(/\/$/, "");
+  ).trim();
+  const repoBase = normalizeGithubRepoUrl(configured);
+  if (!repoBase) {
+    vscode.window.showErrorMessage(
+      `PyDead: invalid pydead.issueRepo "${configured}". ` +
+        `Must be an https://github.com/owner/repo URL (got default if empty).`
+    );
+    return;
+  }
 
   const url = buildIssueUrl(repoBase, title, body);
 
@@ -92,6 +100,47 @@ export async function reportFalsePositive(
   vscode.window.showInformationMessage(
     "Opened GitHub to create a false-positive issue. Review and submit when ready."
   );
+}
+
+/**
+ * Allow only https://github.com/<owner>/<repo> (optional trailing slash).
+ * Rejects javascript:, data:, non-GitHub hosts, and extra path segments.
+ */
+export function normalizeGithubRepoUrl(raw: string): string | undefined {
+  const s = raw.trim().replace(/\/+$/, "");
+  if (!s) {
+    return DEFAULT_ISSUES_REPO;
+  }
+  let u: URL;
+  try {
+    u = new URL(s);
+  } catch {
+    return undefined;
+  }
+  if (u.protocol !== "https:") {
+    return undefined;
+  }
+  if (u.username || u.password) {
+    return undefined;
+  }
+  const host = u.hostname.toLowerCase();
+  if (host !== "github.com" && host !== "www.github.com") {
+    return undefined;
+  }
+  // pathname: /owner/repo  (optionally .git)
+  const parts = u.pathname.split("/").filter(Boolean);
+  if (parts.length !== 2) {
+    return undefined;
+  }
+  const [owner, repoRaw] = parts;
+  const repo = repoRaw.replace(/\.git$/i, "");
+  if (!/^[\w.-]+$/.test(owner) || !/^[\w.-]+$/.test(repo)) {
+    return undefined;
+  }
+  if (u.search || u.hash) {
+    return undefined;
+  }
+  return `https://github.com/${owner}/${repo}`;
 }
 
 function buildTitle(finding: Finding, packageName: string): string {

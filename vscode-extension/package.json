@@ -123,7 +123,7 @@
         "pydead.issueRepo": {
           "type": "string",
           "default": "https://github.com/ErikbStorm/pydead",
-          "description": "GitHub repository URL used when reporting false-positive issues."
+          "description": "GitHub repository URL for false-positive reports. Must be https://github.com/owner/repo only (no other hosts or paths)."
         }
       }
     }

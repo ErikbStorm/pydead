@@ -60,9 +60,11 @@ git push origin v0.1.0
 4. Watch **Actions → Release**. It will:
    - Build `linux-x64`, `darwin-arm64`, `darwin-x64`, `win32-x64`
    - Bundle binaries into the extension
-   - Upload CLI archives + `.vsix` to the GitHub Release
+   - Upload CLI archives + `.vsix` + **`SHA256SUMS`** to the GitHub Release
    - Publish to the Marketplace if `VSCE_PAT` is set
 
+`scripts/install.sh` downloads `SHA256SUMS` and refuses to install on mismatch
+(set `PYDEAD_VERIFY=0` only for emergency bypass).
 ## Install surfaces after release
 
 | Audience | How |
