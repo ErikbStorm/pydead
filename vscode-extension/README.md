@@ -20,10 +20,20 @@ Highlights **unused Python functions, classes, methods, and module-level variabl
 
 Setting `pydead.issueRepo` (default `https://github.com/ErikbStorm/pydead`) controls where issues are filed.
 
+## Install
+
+From the Marketplace (after first release): search **PyDead** in the Extensions view, or:
+
+```bash
+code --install-extension pydead.pydead
+```
+
+Release pipeline: tag `vX.Y.Z` → CI builds platform binaries, packs this extension, publishes to Marketplace. See [`docs/publishing.md`](../docs/publishing.md).
+
 ## Binary resolution
 
 1. Setting `pydead.path` if set
-2. Bundled binary under `bin/<platform>/pydead`
+2. Bundled binary under `bin/<platform>/pydead` (shipped in Marketplace builds)
 3. `pydead` on your `PATH`
 
 ### Local development
@@ -32,11 +42,8 @@ Setting `pydead.issueRepo` (default `https://github.com/ErikbStorm/pydead`) cont
 # build the CLI
 cargo build -p pydead --release
 
-# install for PATH
-cargo install --path crates/pydead
-
-# or copy into extension bundle dir
-mkdir -p vscode-extension/bin/darwin-arm64
+# copy into extension bundle dir for F5
+mkdir -p vscode-extension/bin/darwin-arm64   # or linux-x64 / darwin-x64 / win32-x64
 cp target/release/pydead vscode-extension/bin/darwin-arm64/
 ```
 

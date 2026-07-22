@@ -19,8 +19,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 # code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
+# python3-pil: optional offline fallback render only
+# xvfb + xterm + xdotool + imagemagick: true CLI window screenshots
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pil fonts-dejavu-core \
+    xvfb xterm xdotool x11-utils imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=rust /src/target/release/pydead /usr/local/bin/pydead

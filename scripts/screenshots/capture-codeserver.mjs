@@ -25,21 +25,18 @@ function sleep(ms) {
 }
 
 function runCliPng() {
-  console.log("→ CLI: real pydead find");
+  console.log("→ CLI: true XTerm capture (Xvfb)");
   ensureDir(OUT);
-  const sample = path.join(WORK, "fixtures/sample_project");
-  const out = execFileSync(PYDEAD, ["find", sample], { encoding: "utf8" });
-  const dump = path.join(OUT, "cli-find.raw.txt");
-  fs.writeFileSync(dump, out);
-  execFileSync(
-    "python3",
-    [
-      path.join(__dirname, "render_terminal.py"),
-      dump,
-      path.join(OUT, "cli-find.png"),
-    ],
-    { stdio: "inherit" }
-  );
+  const script = path.join(__dirname, "capture-cli-xterm.sh");
+  execFileSync("bash", [script], {
+    stdio: "inherit",
+    env: {
+      ...process.env,
+      WORK_ROOT: WORK,
+      OUT_DIR: OUT,
+      PYDEAD_BIN: PYDEAD,
+    },
+  });
 }
 
 async function waitHttp(url, ms = 120_000) {

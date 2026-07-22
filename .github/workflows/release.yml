@@ -1,0 +1,243 @@
+# Build multi-platform CLI binaries, package the VS Code extension (bundled
+# binaries), create a GitHub Release, and optionally publish to the Marketplace.
+#
+# Trigger: push a version tag
+#   git tag v0.1.0 && git push origin v0.1.0
+#
+# Secrets (repo Settings → Secrets → Actions):
+#   VSCE_PAT  — Azure DevOps PAT with Marketplace (Acquire / Publish) scopes
+#               Create at https://dev.azure.com → User settings → Personal access tokens
+#               If missing, the workflow still uploads the .vsix to the GitHub Release.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build ${{ matrix.ext_dir }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            ext_dir: linux-x64
+            bin_name: pydead
+            archive: tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            ext_dir: darwin-arm64
+            bin_name: pydead
+            archive: tar.gz
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            ext_dir: darwin-x64
+            bin_name: pydead
+            archive: tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            ext_dir: win32-x64
+            bin_name: pydead.exe
+            archive: zip
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build -p pydead --release --target ${{ matrix.target }}
+
+      - name: Stage binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC="target/${{ matrix.target }}/release/${{ matrix.bin_name }}"
+          DEST="dist/${{ matrix.ext_dir }}"
+          mkdir -p "$DEST"
+          cp "$SRC" "$DEST/${{ matrix.bin_name }}"
+          if [[ "${{ runner.os }}" != "Windows" ]]; then
+            chmod +x "$DEST/${{ matrix.bin_name }}"
+            strip "$DEST/${{ matrix.bin_name }}" || true
+          fi
+          ls -la "$DEST"
+
+      - name: Archive for GitHub Release
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p release-assets
+          cd "dist/${{ matrix.ext_dir }}"
+          # Python is available on all GH runners; works for zip + tar.gz
+          python - <<'PY'
+          import os, tarfile, zipfile
+          version = os.environ["VERSION"].lstrip("v")
+          target = os.environ["TARGET"]
+          bin_name = os.environ["BIN_NAME"]
+          archive = os.environ["ARCHIVE"]
+          out_dir = os.path.join("..", "..", "release-assets")
+          os.makedirs(out_dir, exist_ok=True)
+          if archive == "zip":
+              path = os.path.join(out_dir, f"pydead-{version}-{target}.zip")
+              with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zf:
+                  zf.write(bin_name)
+          else:
+              path = os.path.join(out_dir, f"pydead-{version}-{target}.tar.gz")
+              with tarfile.open(path, "w:gz") as tf:
+                  tf.add(bin_name)
+          print("wrote", path)
+          PY
+          ls -la ../../release-assets/
+        env:
+          VERSION: ${{ github.ref_name }}
+          TARGET: ${{ matrix.target }}
+          BIN_NAME: ${{ matrix.bin_name }}
+          ARCHIVE: ${{ matrix.archive }}
+
+      - name: Upload extension binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: bin-${{ matrix.ext_dir }}
+          path: dist/${{ matrix.ext_dir }}/
+          if-no-files-found: error
+
+      - name: Upload release archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive-${{ matrix.ext_dir }}
+          path: release-assets/*
+          if-no-files-found: error
+
+  package-and-publish:
+    name: Package VSIX + GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version from tag
+        id: ver
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          echo "Releasing $VERSION"
+
+      - name: Sync extension version
+        working-directory: vscode-extension
+        run: |
+          node -e "
+            const fs = require('fs');
+            const p = JSON.parse(fs.readFileSync('package.json','utf8'));
+            p.version = process.env.VERSION;
+            fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');
+          "
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+
+      - name: Download platform binaries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bin-*
+          path: _bins
+          merge-multiple: false
+
+      - name: Install binaries into extension
+        run: |
+          set -euo pipefail
+          for dir in _bins/bin-*; do
+            name="$(basename "$dir")"
+            # bin-linux-x64 → linux-x64
+            platform="${name#bin-}"
+            dest="vscode-extension/bin/${platform}"
+            mkdir -p "$dest"
+            cp -a "$dir"/. "$dest"/
+            if [[ -f "$dest/pydead" ]]; then
+              chmod +x "$dest/pydead"
+            fi
+            echo "→ $dest"
+            ls -la "$dest"
+          done
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Compile + package VSIX
+        working-directory: vscode-extension
+        run: |
+          npm ci
+          npm run compile
+          npx vsce package --no-dependencies --allow-missing-repository
+          ls -la *.vsix
+
+      - name: Download CLI archives
+        uses: actions/download-artifact@v4
+        with:
+          pattern: archive-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Copy VSIX into release assets
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          cp vscode-extension/pydead-*.vsix release-assets/
+          ls -la release-assets/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: PyDead ${{ steps.ver.outputs.version }}
+          generate_release_notes: true
+          files: release-assets/*
+          body: |
+            ## Install
+
+            ### VS Code
+            Install **PyDead** from the [Marketplace](https://marketplace.visualstudio.com/items?itemName=pydead.pydead),
+            or download the `.vsix` below and run `code --install-extension pydead-*.vsix`.
+
+            ### CLI (no Rust required)
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/ErikbStorm/pydead/main/scripts/install.sh | bash
+            ```
+            Or grab a platform archive below and put `pydead` on your `PATH`.
+
+            ### From source
+            ```bash
+            cargo install --path crates/pydead --git https://github.com/ErikbStorm/pydead --tag ${{ steps.ver.outputs.tag }}
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to VS Code Marketplace
+        working-directory: vscode-extension
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${VSCE_PAT:-}" ]]; then
+            echo "::warning::Secret VSCE_PAT is not set. VSIX is on the GitHub Release only."
+            echo "Add VSCE_PAT (docs/publishing.md), or: npx vsce publish --packagePath pydead-*.vsix -p \$VSCE_PAT"
+            exit 0
+          fi
+          VSIX="$(ls -1 pydead-*.vsix | head -1)"
+          echo "Publishing $VSIX to Marketplace…"
+          npx vsce publish --packagePath "$VSIX" --no-dependencies -p "$VSCE_PAT"

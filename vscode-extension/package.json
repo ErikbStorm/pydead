@@ -2,14 +2,35 @@
   "name": "pydead",
   "displayName": "PyDead — Python Dead Code",
   "description": "Highlight unused Python functions, classes, methods, and variables across the whole workspace folder.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "pydead",
+  "license": "MIT",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1a1b26",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ErikbStorm/pydead.git"
+  },
+  "homepage": "https://github.com/ErikbStorm/pydead",
+  "bugs": {
+    "url": "https://github.com/ErikbStorm/pydead/issues"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
     "Linters",
     "Programming Languages"
+  ],
+  "keywords": [
+    "python",
+    "dead code",
+    "unused",
+    "linter",
+    "ruff"
   ],
   "activationEvents": [
     "onLanguage:python",
@@ -39,6 +60,30 @@
         "title": "PyDead: Report False Positive (GitHub Issue)"
       }
     ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "pydead.keepSelection",
+          "when": "editorLangId == python && resourceScheme == file",
+          "group": "pydead@1"
+        },
+        {
+          "command": "pydead.reportFalsePositive",
+          "when": "editorLangId == python && resourceScheme == file",
+          "group": "pydead@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "pydead.keepSelection",
+          "when": "editorLangId == python"
+        },
+        {
+          "command": "pydead.reportFalsePositive",
+          "when": "editorLangId == python"
+        }
+      ]
+    },
     "configuration": {
       "title": "PyDead",
       "properties": {
@@ -87,7 +132,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "vsce package"
+    "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

@@ -1,5 +1,10 @@
 # PyDead
 
+<p align="center">
+  <img src="docs/images/icon.png" alt="PyDead icon: skull with a python coiled around it" width="128" height="128" />
+</p>
+
+
 **Cross-file dead code finder for Python**, written in Rust — with a VS Code extension that highlights unused definitions in the folder you open.
 
 Unlike Ruff/pyflakes (file-local), PyDead analyzes an entire workspace tree so it can see when packages import each other across a monorepo.
@@ -16,7 +21,7 @@ Unlike Ruff/pyflakes (file-local), PyDead analyzes an entire workspace tree so i
   <img src="docs/images/vscode-quickfix.png" alt="Real VS Code Quick Fix lightbulb for PyDead" width="920" />
 </p>
 
-> **Real screenshots** (not mockups): CLI from the actual binary; editor from **headless code-server + Playwright in Docker** so your personal VS Code is never opened.  
+> **Real screenshots** (not mockups): CLI is a **true XTerm window capture** (Xvfb + real `pydead` binary); editor is **headless code-server + Playwright** — all in Docker so your personal VS Code is never opened.  
 > Regenerate: `./scripts/screenshots/run-docker.sh` — see [`scripts/screenshots/README.md`](scripts/screenshots/README.md).
 
 ## What it finds
@@ -43,7 +48,30 @@ Unused definitions are underlined; the status bar shows **PyDead: N**. Quick Fix
 - **report false positive** → open a prefilled GitHub issue
 - **remove** → delete the definition
 
-## Install (CLI)
+## Install
+
+### VS Code (recommended)
+
+Install **PyDead** from the Extensions view (search “PyDead”), or:
+
+```bash
+code --install-extension pydead.pydead
+```
+
+The extension **bundles the analyzer binary** for your platform — no separate CLI install needed.
+
+> Marketplace listing goes live after the first tagged release (see [`docs/publishing.md`](docs/publishing.md)).
+
+### CLI (no Rust required)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ErikbStorm/pydead/main/scripts/install.sh | bash
+# installs to ~/.local/bin/pydead — ensure that dir is on your PATH
+```
+
+Or download a prebuilt archive from [GitHub Releases](https://github.com/ErikbStorm/pydead/releases).
+
+### From source (developers)
 
 ```bash
 cargo install --path crates/pydead
@@ -185,16 +213,7 @@ cargo run -p pydead -- find fixtures/sample_project
 
 ## VS Code extension
 
-See [`vscode-extension/README.md`](vscode-extension/README.md).
-
-Release builds should place platform binaries under:
-
-```
-vscode-extension/bin/darwin-arm64/pydead
-vscode-extension/bin/darwin-x64/pydead
-vscode-extension/bin/linux-x64/pydead
-vscode-extension/bin/win32-x64/pydead.exe
-```
+See [`vscode-extension/README.md`](vscode-extension/README.md). Publishing: [`docs/publishing.md`](docs/publishing.md).
 
 ## Project layout
 

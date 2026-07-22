@@ -11,6 +11,7 @@
 
 | File | Source |
 |------|--------|
-| `cli-find.png` | Real `pydead find` output (framed as terminal) |
+| `icon.png` | Project / Marketplace icon (skull + python) |
+| `cli-find.png` | True XTerm window (Xvfb) running real `pydead find` |
 | `vscode-diag.png` | code-server (Default Dark Modern) + real extension + fixture |
 | `vscode-quickfix.png` | Same session, Quick Fix lightbulb |
