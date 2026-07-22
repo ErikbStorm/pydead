@@ -147,13 +147,30 @@ pub fn apply_fixes(
     })
 }
 
+fn collapse_blank_lines(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut blank_run = 0;
+    for line in s.split_inclusive('\n') {
+        let is_blank = line.trim().is_empty();
+        if is_blank {
+            blank_run += 1;
+            if blank_run <= 2 {
+                out.push_str(line);
+            }
+        } else {
+            blank_run = 0;
+            out.push_str(line);
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::path_safety::sha256_hex;
     use crate::symbols::{DefKind, Position, Range};
     use std::fs;
-    use std::path::PathBuf;
 
     fn finding(path: &str, name: &str, start: u32, end: u32, hash: &str) -> Finding {
         Finding {
@@ -207,27 +224,4 @@ mod tests {
         assert_eq!(r.files_changed, 0);
         assert!(r.skipped.iter().any(|s| s.contains("hash mismatch")));
     }
-
-    #[allow(dead_code)]
-    fn _pb() -> PathBuf {
-        PathBuf::new()
-    }
-}
-
-fn collapse_blank_lines(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    let mut blank_run = 0;
-    for line in s.split_inclusive('\n') {
-        let is_blank = line.trim().is_empty();
-        if is_blank {
-            blank_run += 1;
-            if blank_run <= 2 {
-                out.push_str(line);
-            }
-        } else {
-            blank_run = 0;
-            out.push_str(line);
-        }
-    }
-    out
 }

@@ -19,6 +19,24 @@ Scope = the folder you pass to the CLI (or the VS Code workspace root).
 cargo install --path crates/pydead
 ```
 
+## Development checks (pre-commit)
+
+Same gates as GitHub Actions (fmt, clippy `-D warnings`, tests). Enable once per clone:
+
+```bash
+./scripts/install-hooks.sh
+```
+
+| Command | What it does |
+|---------|----------------|
+| `./scripts/check.sh` | fmt check + clippy + tests + extension compile |
+| `FIX_FMT=1 ./scripts/check.sh` | run `cargo fmt` then the rest |
+| `SKIP_TESTS=1 ./scripts/check.sh` | skip tests (faster) |
+| `SKIP_EXTENSION=1 ./scripts/check.sh` | skip VS Code TypeScript compile |
+| `SKIP_HOOKS=1 git commit …` | bypass pre-commit entirely |
+
+The pre-commit hook runs `scripts/check.sh` automatically (extension compile only if `vscode-extension/` sources are staged; docs-only commits skip cargo).
+
 ## Usage
 
 ```bash

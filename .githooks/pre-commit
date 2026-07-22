@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Pre-commit: fmt + clippy + tests (+ extension compile if TS staged).
+# Install: ./scripts/install-hooks.sh
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+# Fast path for docs-only commits
+STAGED="$(git diff --cached --name-only --diff-filter=ACM || true)"
+if [[ -z "$STAGED" ]]; then
+  exit 0
+fi
+
+ONLY_DOCS=1
+while IFS= read -r f; do
+  [[ -z "$f" ]] && continue
+  case "$f" in
+    *.md|docs/*|.gitignore|LICENSE*) ;;
+    *) ONLY_DOCS=0; break ;;
+  esac
+done <<<"$STAGED"
+
+if [[ "$ONLY_DOCS" == "1" ]]; then
+  echo "pre-commit: docs-only change — skipping cargo/npm checks"
+  exit 0
+fi
+
+export SKIP_EXTENSION=1
+# Compile extension when any vscode-extension source/config is staged
+if echo "$STAGED" | grep -qE '^vscode-extension/(src/|package\.json|tsconfig\.json)'; then
+  export SKIP_EXTENSION=0
+fi
+
+# Allow bypass: SKIP_HOOKS=1 git commit ...
+if [[ "${SKIP_HOOKS:-0}" == "1" ]]; then
+  echo "pre-commit: SKIP_HOOKS=1 — skipping checks"
+  exit 0
+fi
+
+echo "pre-commit: running scripts/check.sh (fmt, clippy, tests" \
+  "$([[ "$SKIP_EXTENSION" == "0" ]] && echo ', extension' || true))"
+
+exec bash "$ROOT/scripts/check.sh"

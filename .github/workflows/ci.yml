@@ -11,12 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - name: Test
-        run: cargo test --workspace
-      - name: Clippy
-        run: cargo clippy -p pydead -- -D warnings
-      - name: Format check
-        run: cargo fmt --all -- --check
+        with:
+          components: rustfmt, clippy
+      - name: Checks (fmt, clippy, test)
+        run: |
+          chmod +x scripts/check.sh
+          SKIP_EXTENSION=1 ./scripts/check.sh
 
   extension:
     runs-on: ubuntu-latest

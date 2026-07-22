@@ -194,8 +194,10 @@ mod tests {
 
     #[test]
     fn user_entry_names() {
-        let mut cfg = Config::default();
-        cfg.entry_names = vec!["main".into(), "run_*".into()];
+        let cfg = Config {
+            entry_names: vec!["main".into(), "run_*".into()],
+            ..Default::default()
+        };
         assert_eq!(
             matching_entry_rule(&def("main", "cli.py", DefKind::Function), &cfg).as_deref(),
             Some("EP010")
@@ -208,8 +210,10 @@ mod tests {
 
     #[test]
     fn ignore_disables_ep005() {
-        let mut cfg = Config::default();
-        cfg.ignore.push("EP005".into());
+        let cfg = Config {
+            ignore: vec!["EP005".into()],
+            ..Default::default()
+        };
         let d = def(
             "upgrade",
             "alembic/versions/001_initial.py",
