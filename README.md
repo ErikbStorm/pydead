@@ -2,6 +2,10 @@
 
 <p align="center">
   <img src="docs/images/icon.png" alt="PyDead icon: skull with a python coiled around it" width="128" height="128" />
+  &nbsp;&nbsp;
+  <img src="docs/images/icon-flat.png" alt="PyDead flat icon variant" width="128" height="128" />
+  &nbsp;&nbsp;
+  <img src="docs/images/icon-flat-transparent.png" alt="PyDead flat icon with transparent background" width="128" height="128" />
 </p>
 
 
@@ -225,4 +229,5 @@ fixtures/sample_project # Ground-truth monorepo for tests
 
 ## License
 
-MIT
+- **Source code** (CLI, extension TypeScript, scripts): [MIT](LICENSE)
+- **Logo / icon artwork** (including flat variant): [CC BY 4.0](docs/images/LICENSE)

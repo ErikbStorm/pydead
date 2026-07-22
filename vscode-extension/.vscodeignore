@@ -9,3 +9,8 @@ tsconfig.json
 node_modules/**
 *.vsix
 package-lock.json
+# Keep VSIX lean: only root icon.png for Marketplace; full set is in the repo
+media/**
+icon-flat.png
+icon-transparent.png
+icon-flat-transparent.png
