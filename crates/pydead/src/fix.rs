@@ -98,7 +98,7 @@ pub fn apply_fixes(
             }
         }
 
-        selected.sort_by(|a, b| b.byte_start.cmp(&a.byte_start));
+        selected.sort_by_key(|b| std::cmp::Reverse(b.byte_start));
 
         let mut new_source = source.clone();
         let mut file_removed = Vec::new();
