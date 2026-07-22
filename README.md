@@ -1,11 +1,7 @@
 # PyDead
 
 <p align="center">
-  <img src="docs/images/icon.png" alt="PyDead icon: skull with a python coiled around it" width="128" height="128" />
-  &nbsp;&nbsp;
-  <img src="docs/images/icon-flat.png" alt="PyDead flat icon variant" width="128" height="128" />
-  &nbsp;&nbsp;
-  <img src="docs/images/icon-flat-transparent.png" alt="PyDead flat icon with transparent background" width="128" height="128" />
+  <img src="docs/images/icon-flat-transparent.png" alt="PyDead icon: skull with a python coiled around it" width="128" height="128" />
 </p>
 
 
