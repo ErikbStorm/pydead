@@ -18,12 +18,6 @@ fail() {
   exit 1
 }
 
-# Optional: refresh README SVGs when the generator changed
-if [[ "${REGEN_ASSETS:-0}" == "1" ]]; then
-  step "generate README SVGs"
-  python3 scripts/generate_readme_assets.py
-fi
-
 step "cargo fmt"
 if [[ "$FIX_FMT" == "1" ]]; then
   cargo fmt --all

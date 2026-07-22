@@ -1,16 +1,35 @@
+# Rust
 /target
 **/*.rs.bk
-.DS_Store
+
+# Python
 __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# Node / extension
 node_modules/
 vscode-extension/out/
 vscode-extension/node_modules/
 vscode-extension/bin/**
 !vscode-extension/bin/.gitkeep
 *.vsix
+
+# Editors / OS
+.DS_Store
 .idea/
 .vscode/
 !vscode-extension/
+
+# Host-side screenshot capture junk
+# Only supported path: ./scripts/screenshots/run-docker.sh (isolated container)
+scripts/screenshots/node_modules/
+scripts/screenshots/.vscode-test-web/
+scripts/screenshots/.code-user/
+scripts/screenshots/test-results/
+scripts/screenshots/playwright-report/
+scripts/screenshots/.cache/
+docs/images/*.svg
+docs/images/*.raw.txt
+docs/images/.DS_Store

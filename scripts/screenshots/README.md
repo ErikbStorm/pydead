@@ -5,7 +5,7 @@ Captures **real PNG** images for the README **without opening your personal VS C
 | Output | How |
 |--------|-----|
 | `docs/images/cli-find.png` | Real `pydead find` output, framed as a terminal |
-| `docs/images/vscode-diag.png` | **code-server** (VS Code) + real extension + fixture |
+| `docs/images/vscode-diag.png` | **code-server** (Default Dark Modern) + real extension + fixture |
 | `docs/images/vscode-quickfix.png` | Same session after **Quick Fix** (`Ctrl+.`) |
 
 ## Run (host)

@@ -68,6 +68,10 @@ function writeCodeServerSettings() {
         "security.workspace.trust.startupPrompt": "never",
         "security.workspace.trust.banner": "never",
         "security.workspace.trust.untrustedFiles": "open",
+        "workbench.colorTheme": "Default Dark Modern",
+        "workbench.preferredDarkColorTheme": "Default Dark Modern",
+        "window.autoDetectColorScheme": false,
+        "workbench.preferredLightColorTheme": "Default Dark Modern",
         "pydead.enable": true,
         "pydead.path": PYDEAD,
         "pydead.severity": "Warning",
@@ -168,7 +172,22 @@ async function captureCodeServer() {
       // Workbench
       await page.waitForSelector(".monaco-workbench", { timeout: 180_000 });
       console.log("  workbench ready");
-      await sleep(3000);
+      await sleep(2000);
+
+      // Belt-and-suspenders: force Default Dark Modern via command palette
+      try {
+        await page.keyboard.press("Control+k");
+        await page.keyboard.press("Control+t");
+        await sleep(800);
+        await page.keyboard.type("Dark Modern", { delay: 30 });
+        await sleep(600);
+        await page.keyboard.press("Enter");
+        await sleep(800);
+        console.log("  theme: Default Dark Modern");
+      } catch {
+        /* settings.json already sets the theme */
+      }
+      await sleep(1000);
 
       // Dismiss Restricted Mode / trust banners if still shown
       for (const label of [
