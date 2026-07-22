@@ -1,0 +1,16 @@
+/target
+**/*.rs.bk
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+vscode-extension/out/
+vscode-extension/node_modules/
+vscode-extension/bin/**
+!vscode-extension/bin/.gitkeep
+*.vsix
+.idea/
+.vscode/
+!vscode-extension/

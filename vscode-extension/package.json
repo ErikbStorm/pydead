@@ -1,0 +1,89 @@
+{
+  "name": "pydead",
+  "displayName": "PyDead — Python Dead Code",
+  "description": "Highlight unused Python functions, classes, methods, and variables across the whole workspace folder.",
+  "version": "0.1.0",
+  "publisher": "pydead",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "workspaceContains:**/*.py"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pydead.find",
+        "title": "PyDead: Find Dead Code"
+      },
+      {
+        "command": "pydead.fixAll",
+        "title": "PyDead: Fix All (workspace)"
+      },
+      {
+        "command": "pydead.fixFile",
+        "title": "PyDead: Fix All in File"
+      },
+      {
+        "command": "pydead.keepSelection",
+        "title": "PyDead: Keep (mark as used)"
+      }
+    ],
+    "configuration": {
+      "title": "PyDead",
+      "properties": {
+        "pydead.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable PyDead diagnostics for Python files."
+        },
+        "pydead.path": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the pydead binary. Empty = use bundled binary, then PATH."
+        },
+        "pydead.minConfidence": {
+          "type": "number",
+          "default": 70,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum confidence (0–100) for reporting dead code."
+        },
+        "pydead.severity": {
+          "type": "string",
+          "enum": [
+            "Hint",
+            "Information",
+            "Warning",
+            "Error"
+          ],
+          "default": "Hint",
+          "description": "Diagnostic severity for unused definitions."
+        },
+        "pydead.runOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Re-analyze the workspace when a Python file is saved."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.3.3"
+  }
+}

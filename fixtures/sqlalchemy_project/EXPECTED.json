@@ -1,0 +1,20 @@
+{
+  "must_be_dead": [
+    {"kind": "method", "qualname": "geo_types.BytesGeometry.never_used_method"},
+    {"kind": "method", "qualname": "geo_types.UserRow.other_unused"},
+    {"kind": "function", "qualname": "geo_types.unused_helper"}
+  ],
+  "must_be_live": [
+    {"kind": "class", "qualname": "geo_types.BytesGeometry"},
+    {"kind": "class", "qualname": "geo_types.Geometry"},
+    {"kind": "method", "qualname": "geo_types.BytesGeometry.load_dialect_impl"},
+    {"kind": "method", "qualname": "geo_types.BytesGeometry.column_expression"},
+    {"kind": "method", "qualname": "geo_types.BytesGeometry.bind_expression"},
+    {"kind": "method", "qualname": "geo_types.BytesGeometry.process_bind_param"},
+    {"kind": "method", "qualname": "geo_types.BytesGeometry.process_result_value"},
+    {"kind": "method", "qualname": "geo_types.BytesGeometry.__init__"},
+    {"kind": "method", "qualname": "geo_types.UserRow.validate_email"},
+    {"kind": "function", "qualname": "geo_types.intentionally_kept_local"},
+    {"kind": "method", "qualname": "geo_types.KeepDemo.plugin_hook"}
+  ]
+}

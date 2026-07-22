@@ -1,0 +1,25 @@
+{
+  "must_be_dead": [
+    {"kind": "method", "qualname": "models.User.never_called_helper"},
+    {"kind": "function", "qualname": "models.orphan_module_func"}
+  ],
+  "must_be_live": [
+    {"kind": "method", "qualname": "models.User.name_must_not_be_empty"},
+    {"kind": "method", "qualname": "models.User.split_tags"},
+    {"kind": "method", "qualname": "models.User.check_adult_name"},
+    {"kind": "method", "qualname": "models.User.serialize_name"},
+    {"kind": "method", "qualname": "models.User.ser_model"},
+    {"kind": "method", "qualname": "models.User.display"},
+    {"kind": "method", "qualname": "models.User.model_post_init"},
+    {"kind": "method", "qualname": "models.FancyInt.__get_pydantic_core_schema__"},
+    {"kind": "method", "qualname": "models.FancyInt.__get_pydantic_json_schema__"},
+    {"kind": "method", "qualname": "models.LegacyItem.sku_upper"},
+    {"kind": "method", "qualname": "models.LegacyItem.qty_positive"},
+    {"kind": "function", "qualname": "models.strip_spaces"},
+    {"kind": "function", "qualname": "models.to_upper_before"},
+    {"kind": "class", "qualname": "models.User"},
+    {"kind": "class", "qualname": "models.FancyInt"},
+    {"kind": "class", "qualname": "models.LegacyItem"},
+    {"kind": "function", "qualname": "app.main"}
+  ]
+}

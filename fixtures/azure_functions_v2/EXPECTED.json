@@ -1,0 +1,24 @@
+{
+  "must_be_dead": [
+    {"kind": "function", "qualname": "function_app.completely_unused_helper"},
+    {"kind": "function", "qualname": "blueprints.orders.blueprint_dead_helper"},
+    {"kind": "function", "qualname": "shared.helpers.unused_orphan"},
+    {"kind": "function", "qualname": "shared.helpers.also_unused"}
+  ],
+  "must_be_live": [
+    {"kind": "function", "qualname": "function_app.http_hello"},
+    {"kind": "function", "qualname": "function_app.timer_cleanup"},
+    {"kind": "function", "qualname": "function_app.queue_worker"},
+    {"kind": "function", "qualname": "function_app.blob_processor"},
+    {"kind": "function", "qualname": "function_app.service_bus_worker"},
+    {"kind": "function", "qualname": "function_app.event_hub_worker"},
+    {"kind": "function", "qualname": "function_app.cosmos_worker"},
+    {"kind": "function", "qualname": "function_app.event_grid_worker"},
+    {"kind": "function", "qualname": "function_app.hello_orchestrator"},
+    {"kind": "function", "qualname": "function_app.say_hello"},
+    {"kind": "function", "qualname": "blueprints.orders.get_order"},
+    {"kind": "function", "qualname": "shared.helpers.format_message"},
+    {"kind": "function", "qualname": "shared.helpers.used_by_http"},
+    {"kind": "variable", "qualname": "shared.helpers.USED_PREFIX"}
+  ]
+}

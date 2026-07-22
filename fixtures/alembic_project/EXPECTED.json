@@ -1,0 +1,11 @@
+{
+  "must_be_dead": [
+    {"kind": "function", "qualname": "alembic.versions.001_initial.leftover_helper"},
+    {"kind": "function", "qualname": "app.models.unused_model_helper"}
+  ],
+  "must_be_live": [
+    {"kind": "function", "qualname": "alembic.versions.001_initial.upgrade"},
+    {"kind": "function", "qualname": "alembic.versions.001_initial.downgrade"},
+    {"kind": "function", "qualname": "app.models.used_by_migration"}
+  ]
+}

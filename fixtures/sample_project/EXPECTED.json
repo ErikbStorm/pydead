@@ -1,0 +1,27 @@
+{
+  "must_be_dead": [
+    {"kind": "function", "qualname": "libs.core.api.orphan_public"},
+    {"kind": "function", "qualname": "libs.core.api._orphan_private"},
+    {"kind": "class", "qualname": "libs.core.api.DeadService"},
+    {"kind": "method", "qualname": "libs.core.api.Greeter.unused_method"},
+    {"kind": "method", "qualname": "libs.core.api.DeadService.execute_dead_work"},
+    {"kind": "variable", "qualname": "libs.core.util.UNUSED_CONSTANT"},
+    {"kind": "function", "qualname": "libs.core.util.dead_helper"},
+    {"kind": "class", "qualname": "libs.plugins.legacy.LegacyPlugin"},
+    {"kind": "method", "qualname": "libs.plugins.legacy.LegacyPlugin.activate"},
+    {"kind": "method", "qualname": "libs.plugins.legacy.LegacyPlugin.deactivate"},
+    {"kind": "function", "qualname": "libs.plugins.legacy.legacy_setup"},
+    {"kind": "function", "qualname": "apps.greeter.unused_app.also_never_called"},
+    {"kind": "function", "qualname": "apps.greeter.unused_app.never_called"}
+  ],
+  "must_be_live": [
+    {"kind": "class", "qualname": "libs.core.api.Greeter"},
+    {"kind": "method", "qualname": "libs.core.api.Greeter.greet"},
+    {"kind": "method", "qualname": "libs.core.api.Greeter.__init__"},
+    {"kind": "variable", "qualname": "libs.core.util.USED_CONSTANT"},
+    {"kind": "function", "qualname": "libs.core.util.format_name"},
+    {"kind": "function", "qualname": "libs.core.util._internal_helper"},
+    {"kind": "function", "qualname": "libs.core.api.reexported_via_all"},
+    {"kind": "function", "qualname": "apps.greeter.main.run"}
+  ]
+}
