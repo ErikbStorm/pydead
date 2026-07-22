@@ -20,7 +20,7 @@ mod symbols;
 pub use analyze::{analyze, AnalysisOptions, AnalysisResult};
 pub use config::{Config, EntryRule};
 pub use fix::{apply_fixes, FixResult};
-pub use path_safety::{is_safe_relative, resolve_under_root, MAX_FILE_BYTES, MAX_FILES};
+pub use path_safety::{is_safe_relative, resolve_under_root, MAX_FILES, MAX_FILE_BYTES};
 pub use report::{write_report, Format, Report};
 pub use rules::{all_rules, RuleMeta};
 pub use symbols::{DefKind, Finding, Position, Range, Stats};

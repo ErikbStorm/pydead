@@ -107,10 +107,7 @@ pub fn apply_fixes(
             let start = start as usize;
             let end = (end as usize).min(new_source.len());
             if start > new_source.len() || start > end {
-                skipped.push(format!(
-                    "{}:{}: invalid span after edits",
-                    rel, item.name
-                ));
+                skipped.push(format!("{}:{}: invalid span after edits", rel, item.name));
                 continue;
             }
             // Soft integrity: span should still contain the definition name
@@ -132,9 +129,8 @@ pub fn apply_fixes(
             files_changed += 1;
             previews.insert(rel.clone(), new_source.clone());
             if !dry_run {
-                atomic_write(&path, new_source.as_bytes()).map_err(|e| {
-                    anyhow::anyhow!("failed to write {}: {e}", path.display())
-                })?;
+                atomic_write(&path, new_source.as_bytes())
+                    .map_err(|e| anyhow::anyhow!("failed to write {}: {e}", path.display()))?;
             }
             removed.extend(file_removed);
         }

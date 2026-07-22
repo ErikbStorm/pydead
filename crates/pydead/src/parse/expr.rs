@@ -1,8 +1,12 @@
 //! Expression tree walking for use collection.
-use rustpython_parser::ast;
 use crate::symbols::NameUse;
+use rustpython_parser::ast;
 
-pub(crate) fn walk_arguments(args: &ast::Arguments, uses: &mut Vec<NameUse>, container: &Option<String>) {
+pub(crate) fn walk_arguments(
+    args: &ast::Arguments,
+    uses: &mut Vec<NameUse>,
+    container: &Option<String>,
+) {
     for arg in args
         .posonlyargs
         .iter()
@@ -28,7 +32,11 @@ pub(crate) fn walk_arguments(args: &ast::Arguments, uses: &mut Vec<NameUse>, con
     }
 }
 
-pub(crate) fn walk_store_target(expr: &ast::Expr, uses: &mut Vec<NameUse>, container: &Option<String>) {
+pub(crate) fn walk_store_target(
+    expr: &ast::Expr,
+    uses: &mut Vec<NameUse>,
+    container: &Option<String>,
+) {
     match expr {
         ast::Expr::Tuple(t) => {
             for e in &t.elts {

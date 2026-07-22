@@ -103,8 +103,7 @@ pub const EP005: EntryPattern = EntryPattern {
 pub const EP006: EntryPattern = EntryPattern {
     code: "EP006",
     name: "pydantic-hooks",
-    explanation:
-        "Pydantic v1/v2 hooks: validators, serializers, computed fields, schema methods.",
+    explanation: "Pydantic v1/v2 hooks: validators, serializers, computed fields, schema methods.",
     names: &[
         "model_post_init",
         "__get_pydantic_core_schema__",
@@ -184,22 +183,14 @@ impl EntryPattern {
         if self.names.contains(&def.name.as_str()) {
             return true;
         }
-        if self
-            .name_suffixes
-            .iter()
-            .any(|s| def.name.ends_with(s))
-        {
+        if self.name_suffixes.iter().any(|s| def.name.ends_with(s)) {
             return true;
         }
         for attr in &def.decorator_attrs {
             if self.decorators.contains(&attr.as_str()) {
                 return true;
             }
-            if self
-                .decorator_suffixes
-                .iter()
-                .any(|s| attr.ends_with(s))
-            {
+            if self.decorator_suffixes.iter().any(|s| attr.ends_with(s)) {
                 return true;
             }
         }
@@ -338,10 +329,7 @@ mod tests {
 
     #[test]
     fn alembic_path_scoped() {
-        assert!(EP005.matches(
-            &def("upgrade", "alembic/versions/001.py", &[]),
-            None
-        ));
+        assert!(EP005.matches(&def("upgrade", "alembic/versions/001.py", &[]), None));
         assert!(!EP005.matches(&def("upgrade", "app/service.py", &[]), None));
     }
 
@@ -355,10 +343,7 @@ mod tests {
 
     #[test]
     fn sqlalchemy_type_hooks() {
-        assert!(EP007.matches(
-            &def("load_dialect_impl", "geo.py", &[]),
-            None
-        ));
+        assert!(EP007.matches(&def("load_dialect_impl", "geo.py", &[]), None));
         assert!(EP007.matches(&def("bind_expression", "geo.py", &[]), None));
         assert!(EP007.matches(&def("column_expression", "geo.py", &[]), None));
     }

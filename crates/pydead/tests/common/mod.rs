@@ -41,10 +41,7 @@ pub fn assert_expected(fixture: &str) {
     })
     .unwrap_or_else(|e| panic!("analyze {fixture}: {e:#}"));
 
-    assert_eq!(
-        result.stats.parse_errors, 0,
-        "{fixture}: parse errors"
-    );
+    assert_eq!(result.stats.parse_errors, 0, "{fixture}: parse errors");
 
     let found: HashSet<String> = result
         .findings

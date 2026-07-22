@@ -115,10 +115,7 @@ pub fn analyze(opts: &AnalysisOptions) -> anyhow::Result<AnalysisResult> {
             continue;
         }
 
-        let file_hash = file_hashes
-            .get(&def.rel_path)
-            .cloned()
-            .unwrap_or_default();
+        let file_hash = file_hashes.get(&def.rel_path).cloned().unwrap_or_default();
         findings.push(definition_to_finding(def, confidence, file_hash));
     }
 

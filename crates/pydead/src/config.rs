@@ -147,10 +147,7 @@ impl Config {
 
     /// Whether a rule code is active (not listed in `ignore`).
     pub fn rule_enabled(&self, code: &str) -> bool {
-        !self
-            .ignore
-            .iter()
-            .any(|c| c.eq_ignore_ascii_case(code))
+        !self.ignore.iter().any(|c| c.eq_ignore_ascii_case(code))
     }
 }
 

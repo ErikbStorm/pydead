@@ -84,10 +84,7 @@ pub fn line_suppresses(line: &str, code: &str) -> bool {
     if directive.suppress_all {
         return true;
     }
-    directive
-        .codes
-        .iter()
-        .any(|c| c.eq_ignore_ascii_case(code))
+    directive.codes.iter().any(|c| c.eq_ignore_ascii_case(code))
 }
 
 #[derive(Debug, Default)]

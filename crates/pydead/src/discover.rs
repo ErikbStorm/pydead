@@ -75,9 +75,7 @@ pub fn discover_python_files(root: &Path, config: &Config) -> anyhow::Result<Vec
         }
         files.push(path.to_path_buf());
         if files.len() >= MAX_FILES {
-            eprintln!(
-                "warning: reached max file limit ({MAX_FILES}); remaining files skipped"
-            );
+            eprintln!("warning: reached max file limit ({MAX_FILES}); remaining files skipped");
             break;
         }
     }

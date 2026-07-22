@@ -7,9 +7,9 @@ use rustpython_parser::source_code::{LineIndex, SourceCode};
 use rustpython_parser::text_size::TextRange;
 use rustpython_parser::Parse;
 
+use self::expr::{walk_arguments, walk_expr, walk_store_target};
 use crate::discover::path_to_module;
 use crate::symbols::{DefKind, Definition, NameUse, Position, Range};
-use self::expr::{walk_arguments, walk_expr, walk_store_target};
 
 /// A successfully parsed Python module.
 pub struct ParsedModule {
@@ -30,10 +30,7 @@ pub struct Extracted {
 
 pub fn parse_file(root: &Path, path: &Path) -> anyhow::Result<ParsedModule> {
     if !crate::path_safety::file_allowed_for_read(path).unwrap_or(false) {
-        anyhow::bail!(
-            "skipping unsafe or oversized file: {}",
-            path.display()
-        );
+        anyhow::bail!("skipping unsafe or oversized file: {}", path.display());
     }
     let source = std::fs::read_to_string(path)?;
     let path_str = path.to_string_lossy();
@@ -656,7 +653,6 @@ fn const_str(expr: &ast::Expr) -> Option<String> {
         _ => None,
     }
 }
-
 
 fn resolve_import_from_module(module: &ParsedModule, imp: &ast::StmtImportFrom) -> Option<String> {
     let level = imp.level.map(|l| l.to_u32()).unwrap_or(0);

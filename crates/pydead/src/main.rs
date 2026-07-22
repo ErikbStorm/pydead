@@ -2,9 +2,7 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use clap::{Parser, Subcommand, ValueEnum};
-use pydead::{
-    all_rules, analyze, apply_fixes, write_report, AnalysisOptions, Config, Format,
-};
+use pydead::{all_rules, analyze, apply_fixes, write_report, AnalysisOptions, Config, Format};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -157,12 +155,7 @@ fn run() -> anyhow::Result<()> {
             }
 
             let root = result.root.clone();
-            let fix = apply_fixes(
-                &root,
-                &findings,
-                dry_run,
-                Some(&result.file_hashes),
-            )?;
+            let fix = apply_fixes(&root, &findings, dry_run, Some(&result.file_hashes))?;
 
             match format {
                 OutputFormat::Json => {
