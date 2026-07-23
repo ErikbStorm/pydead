@@ -19,24 +19,25 @@ Setting `pydead.issueRepo` (default `https://github.com/ErikbStorm/pydead`) cont
 
 ## Install
 
-**→ [VS Code Marketplace: PyDead](https://marketplace.visualstudio.com/items?itemName=pydead.pydead)**
+**→ [VS Code Marketplace: PyDead](https://marketplace.visualstudio.com/items?itemName=pydead.pydead)** (v0.1.0)
 
 ```bash
 code --install-extension pydead.pydead
 ```
 
+Or: Extensions view → search **PyDead** → Install.
+
 ### From a VSIX (GitHub Release)
 
-- **Direct download:** [pydead-0.1.0.vsix](https://github.com/ErikbStorm/pydead/releases/download/v0.1.0/pydead-0.1.0.vsix)
-- Or open [Releases](https://github.com/ErikbStorm/pydead/releases) and grab the latest `.vsix`
+Download the latest `.vsix` from [Releases](https://github.com/ErikbStorm/pydead/releases/latest), then:
 
 ```bash
-code --install-extension pydead-0.1.0.vsix
+code --install-extension pydead-*.vsix
 # or: Extensions → ⋯ → Install from VSIX…
 ```
 
 Reload, open a Python workspace, run **PyDead: Find Dead Code**.  
-The VSIX includes platform binaries under `bin/` — no separate CLI install required.
+The package includes platform binaries under `bin/` — no separate CLI install required.
 
 Release pipeline: tag `vX.Y.Z` → CI builds binaries, packs this extension, publishes to Marketplace. See [`docs/publishing.md`](../docs/publishing.md).
 

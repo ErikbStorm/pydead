@@ -69,36 +69,13 @@ git push origin v0.1.0
 
 | Audience | How |
 |----------|-----|
-| VS Code | Prefer **VSIX** from the GitHub Release until Marketplace is public |
-| VS Code | Marketplace item `pydead.pydead` (only after it appears in [manage](https://marketplace.visualstudio.com/manage)) |
-| CLI | `curl -fsSL …/scripts/install.sh \| bash` (checks `SHA256SUMS`) |
+| VS Code | [Marketplace: pydead.pydead](https://marketplace.visualstudio.com/items?itemName=pydead.pydead) |
+| VS Code | VSIX from [GitHub Releases](https://github.com/ErikbStorm/pydead/releases/latest) |
+| CLI | `curl -fsSL …/scripts/install.sh \| bash` (checks `SHA256SUMS` when present) |
 | Dev | `cargo install --path crates/pydead` |
 
-### Empty publisher (no extensions listed)
-
-If https://marketplace.visualstudio.com/manage shows publisher **`pydead`** but **no extensions**:
-
-1. Confirm **`package.json`** has `"publisher": "pydead"` (exact id, case-sensitive).
-2. Create a **new Azure DevOps PAT** while signed in as the **same** Microsoft account that owns that publisher:
-   - https://dev.azure.com → User settings → Personal access tokens  
-   - Organization: **All accessible organizations**  
-   - Scopes: **Marketplace → Manage**
-3. Update the GitHub secret:
-   ```bash
-   gh secret set VSCE_PAT --repo ErikbStorm/pydead
-   # paste the new PAT
-   ```
-4. Run **Actions → Publish Marketplace** (uses release VSIX + your PAT).
-5. Refresh the manage page — you should see extension **pydead**.
-
-Public URL (after it appears in the hub):  
-https://marketplace.visualstudio.com/items?itemName=pydead.pydead
-
-Until then, install via VSIX from GitHub Releases.
-
-### Marketplace 404 after `vsce` says “Published”
-
-If publish logs say success but the public page 404s and the hub is still empty, the PAT almost always belongs to a **different** Microsoft account than the hub publisher. Recreate the PAT under the hub account (steps above) and re-run **Publish Marketplace**.
+Public listing: https://marketplace.visualstudio.com/items?itemName=pydead.pydead  
+Publisher hub: https://marketplace.visualstudio.com/manage/publishers/pydead
 
 ## Manual local VSIX (optional)
 

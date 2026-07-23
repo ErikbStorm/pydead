@@ -5,16 +5,15 @@
 </p>
 
 <p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=pydead.pydead"><img src="https://img.shields.io/visual-studio-marketplace/v/pydead.pydead?label=VS%20Code%20Marketplace&logo=visualstudiocode" alt="VS Code Marketplace" /></a>
   <a href="https://github.com/ErikbStorm/pydead/releases/latest"><img src="https://img.shields.io/github/v/release/ErikbStorm/pydead?label=GitHub%20Release" alt="GitHub Release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/ErikbStorm/pydead" alt="MIT License" /></a>
 </p>
 
 <p align="center">
-  <strong><a href="https://github.com/ErikbStorm/pydead/releases/download/v0.1.0/pydead-0.1.0.vsix">Download VS Code extension (VSIX v0.1.0) →</a></strong>
+  <strong><a href="https://marketplace.visualstudio.com/items?itemName=pydead.pydead">Install on VS Code Marketplace →</a></strong>
   ·
-  <a href="https://github.com/ErikbStorm/pydead/releases/latest">All releases</a>
-  ·
-  <a href="https://marketplace.visualstudio.com/items?itemName=pydead.pydead">Marketplace</a> (if listed)
+  <a href="https://github.com/ErikbStorm/pydead/releases/latest">GitHub Releases</a>
 </p>
 
 **Cross-file dead code finder for Python**, written in Rust — with a VS Code extension that highlights unused definitions in the folder you open.
@@ -67,37 +66,31 @@ Other actions live in the **Command Palette** / right-click menu: report false p
 
 ### VS Code / Cursor (recommended)
 
+**→ [PyDead on the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=pydead.pydead)**
+
 The extension **bundles the `pydead` binary** for your OS — no separate CLI install needed.
 
-**Install from VSIX (works now):**
+| Method | How |
+|--------|-----|
+| **Marketplace** | [Open listing](https://marketplace.visualstudio.com/items?itemName=pydead.pydead) → **Install** |
+| **In editor** | Extensions (`⌘⇧X` / `Ctrl+Shift+X`) → search **PyDead** → Install |
+| **CLI** | `code --install-extension pydead.pydead` |
+| **VSIX** (offline / Cursor) | [Download from Releases](https://github.com/ErikbStorm/pydead/releases/latest) → Extensions → ⋯ → **Install from VSIX…** |
 
-1. Download **[pydead-0.1.0.vsix](https://github.com/ErikbStorm/pydead/releases/download/v0.1.0/pydead-0.1.0.vsix)**
-2. Install:
-
-```bash
-code --install-extension pydead-0.1.0.vsix
-# Cursor:
-# cursor --install-extension pydead-0.1.0.vsix
-```
-
-Or in the editor: Extensions (`⌘⇧X` / `Ctrl+Shift+X`) → **⋯** → **Install from VSIX…**
-
-3. Reload, open a Python folder, run **PyDead: Find Dead Code** (`⌘⇧P` / `Ctrl+Shift+P`).  
-   Status bar shows **PyDead: N**; Problems lists findings like `DC001`.
-
-**Marketplace** (optional once public): [`pydead.pydead`](https://marketplace.visualstudio.com/items?itemName=pydead.pydead)  
-`vsce` can report “Published” while the public gallery still returns 404 until the publisher listing is fully active in [Publisher Management](https://marketplace.visualstudio.com/manage). Until then, use the VSIX.
+After install: reload, open a Python folder, run **PyDead: Find Dead Code** (`⌘⇧P` / `Ctrl+Shift+P`).  
+Status bar shows **PyDead: N**; Problems lists findings like `DC001`.
 
 ### CLI (no Rust required)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ErikbStorm/pydead/main/scripts/install.sh | bash
 # installs to ~/.local/bin/pydead — ensure that dir is on your PATH
-# verifies SHA-256 against the release SHA256SUMS file
+# verifies SHA-256 against the release SHA256SUMS file (when present)
 pydead find .
 ```
 
 Or download a platform archive from [GitHub Releases](https://github.com/ErikbStorm/pydead/releases), check it against `SHA256SUMS`, and put `pydead` on your `PATH`.
+
 ### From source (developers)
 
 ```bash
