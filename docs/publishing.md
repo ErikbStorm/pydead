@@ -37,7 +37,7 @@ Without this secret, CI still creates the GitHub Release and `.vsix`; you can pu
 
 ```bash
 cd vscode-extension
-npx vsce publish --packagePath pydead-0.1.0.vsix -p "$VSCE_PAT"
+npx vsce publish --packagePath pydead-*.vsix -p "$VSCE_PAT"
 ```
 
 ### Extension icon

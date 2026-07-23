@@ -19,7 +19,7 @@ Setting `pydead.issueRepo` (default `https://github.com/ErikbStorm/pydead`) cont
 
 ## Install
 
-**→ [VS Code Marketplace: PyDead](https://marketplace.visualstudio.com/items?itemName=pydead.pydead)** (v0.1.0)
+**→ [VS Code Marketplace: PyDead](https://marketplace.visualstudio.com/items?itemName=pydead.pydead)**
 
 ```bash
 code --install-extension pydead.pydead
