@@ -140,7 +140,31 @@ On a PyDead diagnostic, open the lightbulb (`Cmd+.` / `Ctrl+.`) and choose:
 
 - **PyDead: keep '…' (mark as used)** — inserts `# pydead: keep` (preferred)
 - **PyDead: keep (DCxxx only)** — inserts `# pydead: keep DCxxx`
-- Or command palette: **PyDead: Keep (mark as used)**
+- **PyDead: ignore entire file** — inserts `# pydead: ignore-file`
+- Or command palette: **PyDead: Keep (mark as used)** / **PyDead: Ignore Entire File**
+
+### Ignore an entire file
+
+Put a whole-line pragma anywhere in the file (usually near the top, after shebang /
+encoding). The file is still parsed for cross-file references; PyDead just stops
+reporting DC findings in it:
+
+```python
+# pydead: ignore-file
+
+def generated_or_dynamic_stuff():
+    ...
+```
+
+| Form | Effect |
+|------|--------|
+| `# pydead: ignore-file` | Suppress all DC findings in this file |
+| `# pydead: ignore-file DC001` | Only that code in this file |
+| `# pydead: file-ignore` / `# pydead: noqa-file` | Aliases |
+
+Must be a **comment-only** line (not a trailing comment on code).
+
+To skip scanning a path entirely (no defs/uses from it), use config `exclude` instead.
 
 ### Manual comments
 

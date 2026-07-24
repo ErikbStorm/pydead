@@ -213,6 +213,9 @@ def also_ok():
 # Ruff-compatible
 def ruff_style():  # noqa: DC001
     ...
+
+# Whole file — VS Code: “PyDead: Ignore Entire File”
+# pydead: ignore-file
 ```
 
 See [docs/rules.md](docs/rules.md) for all forms.

@@ -7,7 +7,11 @@ import {
   runFix,
 } from "./client";
 import { DiagnosticController } from "./diagnostics";
-import { buildKeepEdit, keepActionTitle } from "./keep";
+import {
+  buildIgnoreFileEdit,
+  buildKeepEdit,
+  keepActionTitle,
+} from "./keep";
 import { findingAtCursor, reportFalsePositive } from "./reportIssue";
 
 let diagnostics: DiagnosticController;
@@ -55,6 +59,9 @@ export function activate(context: vscode.ExtensionContext): void {
     ),
     vscode.commands.registerCommand("pydead.keepSelectionCodeOnly", () =>
       keepAtCursor(context, true)
+    ),
+    vscode.commands.registerCommand("pydead.ignoreFile", () =>
+      ignoreCurrentFile(context)
     ),
     vscode.commands.registerCommand("pydead.reportFalsePositive", async () => {
       const editor = vscode.window.activeTextEditor;
@@ -172,6 +179,32 @@ async function analyzeWorkspace(
   }
 }
 
+async function ignoreCurrentFile(
+  context: vscode.ExtensionContext
+): Promise<void> {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document.languageId !== "python") {
+    vscode.window.showInformationMessage("PyDead: open a Python file first");
+    return;
+  }
+  const edit = buildIgnoreFileEdit(editor.document);
+  if (!edit) {
+    vscode.window.showInformationMessage(
+      "PyDead: file already has # pydead: ignore-file"
+    );
+    return;
+  }
+  const ok = await vscode.workspace.applyEdit(edit);
+  if (!ok) {
+    vscode.window.showErrorMessage("PyDead: failed to insert ignore-file marker");
+    return;
+  }
+  vscode.window.showInformationMessage(
+    "PyDead: ignoring all findings in this file (# pydead: ignore-file)"
+  );
+  scheduleAnalyze(context);
+}
+
 async function keepAtCursor(
   context: vscode.ExtensionContext,
   codeOnly: boolean
@@ -241,12 +274,13 @@ async function fixFindings(
 }
 
 /**
- * Lightbulb (⌘.) only offers the two common actions:
+ * Lightbulb (⌘.) only offers the common actions:
  *   1. Keep  (`# pydead: keep`) — preferred
  *   2. Remove this definition
+ *   3. Ignore entire file (`# pydead: ignore-file`) — once per file with findings
  *
  * Less common actions stay in the Command Palette / editor context menu:
- *   - PyDead: Keep (code only) — via keepSelection + code-only not in lightbulb
+ *   - PyDead: Keep (code only)
  *   - PyDead: Report False Positive
  *   - PyDead: Fix All in File / workspace
  */
@@ -309,6 +343,26 @@ class PyDeadCodeActionProvider implements vscode.CodeActionProvider {
         };
         remove.diagnostics = pydeadDiagnosticsFor(context, f);
         actions.push(remove);
+      }
+    }
+
+    // Ignore whole file when this file has any PyDead findings under the cursor/range
+    if (relevant.length > 0) {
+      const ignoreEdit = buildIgnoreFileEdit(document);
+      if (ignoreEdit) {
+        const ignoreFile = new vscode.CodeAction(
+          "PyDead: ignore entire file",
+          vscode.CodeActionKind.QuickFix
+        );
+        ignoreFile.edit = ignoreEdit;
+        ignoreFile.diagnostics = context.diagnostics.filter(
+          (d) => d.source === "pydead"
+        );
+        ignoreFile.command = {
+          command: "pydead.afterKeep",
+          title: "Rescan after ignore-file",
+        };
+        actions.push(ignoreFile);
       }
     }
 

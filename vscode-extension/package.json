@@ -2,7 +2,7 @@
   "name": "pydead",
   "displayName": "PyDead — Python Dead Code",
   "description": "Highlight unused Python functions, classes, methods, and variables across the whole workspace folder.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "pydead",
   "license": "MIT",
   "icon": "icon.png",
@@ -60,6 +60,10 @@
         "title": "PyDead: Keep (this rule code only)"
       },
       {
+        "command": "pydead.ignoreFile",
+        "title": "PyDead: Ignore Entire File"
+      },
+      {
         "command": "pydead.reportFalsePositive",
         "title": "PyDead: Report False Positive (GitHub Issue)"
       }
@@ -72,14 +76,19 @@
           "group": "pydead@1"
         },
         {
-          "command": "pydead.reportFalsePositive",
+          "command": "pydead.ignoreFile",
           "when": "editorLangId == python && resourceScheme == file",
           "group": "pydead@2"
         },
         {
-          "command": "pydead.fixFile",
+          "command": "pydead.reportFalsePositive",
           "when": "editorLangId == python && resourceScheme == file",
           "group": "pydead@3"
+        },
+        {
+          "command": "pydead.fixFile",
+          "when": "editorLangId == python && resourceScheme == file",
+          "group": "pydead@4"
         }
       ],
       "commandPalette": [
@@ -89,6 +98,10 @@
         },
         {
           "command": "pydead.keepSelectionCodeOnly",
+          "when": "editorLangId == python"
+        },
+        {
+          "command": "pydead.ignoreFile",
           "when": "editorLangId == python"
         },
         {
@@ -133,8 +146,8 @@
             "Warning",
             "Error"
           ],
-          "default": "Hint",
-          "description": "Diagnostic severity for unused definitions."
+          "default": "Warning",
+          "description": "Diagnostic severity for unused definitions. Warning (default) lists them in the Problems tab; Hint only fades code."
         },
         "pydead.runOnSave": {
           "type": "boolean",

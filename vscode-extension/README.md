@@ -4,12 +4,14 @@ Highlights **unused Python functions, classes, methods, and module-level variabl
 
 ## Features
 
-- Diagnostics (Hint by default) on dead definitions
+- Diagnostics (Warning by default) on dead definitions — listed in the **Problems** tab
 - Status bar count
-- **Quick Fix (lightbulb / `Cmd+.`)** — only the common pair:
+- **Quick Fix (lightbulb / `Cmd+.`)** — common actions:
   - **Keep** — inserts `# pydead: keep` (preferred)
   - **Remove** — deletes this definition
+  - **Ignore entire file** — inserts `# pydead: ignore-file`
 - **Command Palette / right-click** for everything else:
+  - **PyDead: Ignore Entire File** — same as above (works without a diagnostic under the cursor)
   - **PyDead: Keep (this rule code only)** — `# pydead: keep DCxxx`
   - **PyDead: Report False Positive (GitHub Issue)**
   - **PyDead: Fix All in File** / **Fix All (workspace)**
@@ -72,5 +74,5 @@ npm run compile
 | `pydead.enable` | `true` | Turn diagnostics on/off |
 | `pydead.path` | `""` | Override binary path |
 | `pydead.minConfidence` | `70` | Minimum confidence |
-| `pydead.severity` | `Hint` | Diagnostic severity |
+| `pydead.severity` | `Warning` | Diagnostic severity (`Warning` shows in Problems; `Hint` only fades code) |
 | `pydead.runOnSave` | `true` | Re-scan after saving `.py` files |

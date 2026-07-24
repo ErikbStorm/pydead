@@ -75,15 +75,16 @@ export class DiagnosticController {
 function severityFromConfig(): vscode.DiagnosticSeverity {
   const s = vscode.workspace
     .getConfiguration("pydead")
-    .get<string>("severity", "Hint");
+    .get<string>("severity", "Warning");
   switch (s) {
     case "Error":
       return vscode.DiagnosticSeverity.Error;
-    case "Warning":
-      return vscode.DiagnosticSeverity.Warning;
     case "Information":
       return vscode.DiagnosticSeverity.Information;
-    default:
+    case "Hint":
       return vscode.DiagnosticSeverity.Hint;
+    case "Warning":
+    default:
+      return vscode.DiagnosticSeverity.Warning;
   }
 }

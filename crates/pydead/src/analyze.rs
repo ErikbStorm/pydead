@@ -65,10 +65,16 @@ pub fn analyze(opts: &AnalysisOptions) -> anyhow::Result<AnalysisResult> {
     let mut all_exports_by_module: HashMap<String, Vec<String>> = HashMap::new();
     // rel_path → source (for noqa / pydead: ignore)
     let mut sources: HashMap<String, String> = HashMap::new();
+    // rel_path → optional file-level `# pydead: ignore-file`
+    let mut file_ignores: HashMap<String, Option<ignore::FileIgnore>> = HashMap::new();
 
     let mut file_hashes: HashMap<String, String> = HashMap::new();
     for module in &modules {
         sources.insert(module.rel_path.clone(), module.source.clone());
+        file_ignores.insert(
+            module.rel_path.clone(),
+            ignore::parse_file_ignore(&module.source),
+        );
         file_hashes.insert(
             module.rel_path.clone(),
             sha256_hex(module.source.as_bytes()),
@@ -104,8 +110,14 @@ pub fn analyze(opts: &AnalysisOptions) -> anyhow::Result<AnalysisResult> {
             continue;
         }
 
+        if let Some(Some(fi)) = file_ignores.get(&def.rel_path) {
+            if fi.suppresses(rule.code) {
+                continue;
+            }
+        }
         if let Some(src) = sources.get(&def.rel_path) {
-            if ignore::is_suppressed(src, def.range.start.line, rule.code) {
+            // Per-definition keep/noqa (file-level already handled above)
+            if ignore::is_line_suppressed(src, def.range.start.line, rule.code) {
                 continue;
             }
         }
